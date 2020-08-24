@@ -1,0 +1,398 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0304
+header_name {.h}
+code_name {.cxx}
+widget_class MainUI {
+  label TIMedit
+  callback cb_MainWindow open
+  xywh {293 202 905 545} type Double resizable
+  class Fl_Double_Window visible
+} {
+  Fl_Menu_Bar {} {open
+    xywh {0 0 905 20} labelsize 12 textsize 12
+  } {
+    Submenu {} {
+      label {&File} open
+      xywh {0 0 70 20} labelsize 12
+    } {
+      MenuItem {} {
+        label {&New Project}
+        callback cb_NewProject
+        xywh {0 0 30 20} labelsize 12
+      }
+      MenuItem {} {
+        label {&Open Project}
+        callback cb_OpenProject
+        xywh {0 0 30 20} shortcut 0x4006f labelsize 12
+      }
+      MenuItem {} {
+        label {&Save Project}
+        user_data 0 user_data_type long
+        callback cb_SaveProject
+        xywh {0 0 30 20} shortcut 0x40073 labelsize 12
+      }
+      MenuItem {} {
+        label {Save Project &As}
+        user_data 1 user_data_type long
+        callback cb_SaveProject
+        xywh {0 0 30 20} labelsize 12 divider
+      }
+      MenuItem {} {
+        label {Import Image...}
+        callback cb_ImportImage
+        xywh {0 0 30 20} labelsize 12 divider
+      }
+      MenuItem {} {
+        label {E&xit}
+        callback cb_Exit selected
+        xywh {0 0 36 20} labelsize 12
+      }
+    }
+    Submenu {} {
+      label {&Edit} open
+      xywh {0 0 62 20} labelsize 12
+    } {
+      MenuItem {} {
+        label {Edit CLUT...}
+        callback cb_EditClut
+        xywh {0 0 30 20} labelsize 12 divider
+      }
+      MenuItem {} {
+        label {Add Group...}
+        callback cb_AddGroup
+        xywh {0 0 30 20} labelsize 12
+      }
+      MenuItem {} {
+        label {Remove Current Group}
+        callback cb_RemoveGroup
+        xywh {0 0 30 20} labelsize 12
+      }
+      MenuItem {} {
+        label {Move TIM to Group...}
+        callback cb_MoveTimToGroup
+        xywh {0 0 30 20} labelsize 12 divider
+      }
+      MenuItem {} {
+        label {Re-import Selected TIM}
+        user_data 0 user_data_type long
+        callback cb_ReimportTim
+        xywh {0 0 30 20} labelsize 12
+      }
+      MenuItem {} {
+        label {Edit Import Parameters...}
+        user_data 1 user_data_type long
+        callback cb_ReimportTim
+        xywh {0 0 30 20} labelsize 12 divider
+      }
+      MenuItem {} {
+        label {Check for Overlapping TIMs}
+        callback cb_CheckOverlap
+        xywh {0 0 30 20} labelsize 12
+      }
+    }
+    Submenu {} {
+      label {Frame&buffer} open
+      xywh {0 0 62 20} labelsize 12
+    } {
+      Submenu {} {
+        label Resolution open
+        xywh {0 0 62 20} labelsize 12
+      } {
+        MenuItem {buffer_res[0]} {
+          label None
+          user_data 0 user_data_type long
+          callback cb_SetBufferRes
+          xywh {0 0 30 20} type Radio value 1 labelsize 12
+        }
+        MenuItem {buffer_res[1]} {
+          label {256x240 NTSC}
+          user_data 1 user_data_type long
+          callback cb_SetBufferRes
+          xywh {0 0 30 20} type Radio labelsize 12
+        }
+        MenuItem {buffer_res[2]} {
+          label {320x240 NTSC}
+          user_data 2 user_data_type long
+          callback cb_SetBufferRes
+          xywh {0 0 30 20} type Radio labelsize 12
+        }
+        MenuItem {buffer_res[3]} {
+          label {384x240 NTSC (16:9)}
+          user_data 3 user_data_type long
+          callback cb_SetBufferRes
+          xywh {0 0 30 20} type Radio labelsize 12
+        }
+        MenuItem {buffer_res[4]} {
+          label {512x240 NTSC}
+          user_data 4 user_data_type long
+          callback cb_SetBufferRes
+          xywh {0 0 30 20} type Radio labelsize 12
+        }
+        MenuItem {buffer_res[5]} {
+          label {640x240 NTSC}
+          user_data 5 user_data_type long
+          callback cb_SetBufferRes
+          xywh {0 0 30 20} type Radio labelsize 12
+        }
+        MenuItem {buffer_res[6]} {
+          label {256x480 NTSC}
+          user_data 6 user_data_type long
+          callback cb_SetBufferRes
+          xywh {10 10 30 20} type Radio labelsize 12
+        }
+        MenuItem {buffer_res[7]} {
+          label {320x480 NTSC}
+          user_data 7 user_data_type long
+          callback cb_SetBufferRes
+          xywh {10 10 30 20} type Radio labelsize 12
+        }
+        MenuItem {buffer_res[8]} {
+          label {384x480 NTSC}
+          user_data 8 user_data_type long
+          callback cb_SetBufferRes
+          xywh {10 10 30 20} type Radio labelsize 12
+        }
+        MenuItem {buffer_res[9]} {
+          label {512x480 NTSC}
+          user_data 9 user_data_type long
+          callback cb_SetBufferRes
+          xywh {10 10 30 20} type Radio labelsize 12
+        }
+        MenuItem {buffer_res[10]} {
+          label {640x480 NTSC}
+          user_data 10 user_data_type long
+          callback cb_SetBufferRes
+          xywh {10 10 30 20} type Radio labelsize 12
+        }
+        MenuItem {buffer_res[11]} {
+          label {256x256 PAL}
+          user_data 11 user_data_type long
+          callback cb_SetBufferRes
+          xywh {10 10 30 20} type Radio labelsize 12
+        }
+        MenuItem {buffer_res[12]} {
+          label {320x256 PAL}
+          user_data 12 user_data_type long
+          callback cb_SetBufferRes
+          xywh {10 10 30 20} type Radio labelsize 12
+        }
+        MenuItem {buffer_res[13]} {
+          label {384x256 PAL}
+          user_data 13 user_data_type long
+          callback cb_SetBufferRes
+          xywh {10 10 30 20} type Radio labelsize 12
+        }
+        MenuItem {buffer_res[14]} {
+          label {512x256 PAL}
+          user_data 14 user_data_type long
+          callback cb_SetBufferRes
+          xywh {10 10 30 20} type Radio labelsize 12
+        }
+        MenuItem {buffer_res[15]} {
+          label {640x256 PAL}
+          user_data 15 user_data_type long
+          callback cb_SetBufferRes
+          xywh {10 10 30 20} type Radio labelsize 12
+        }
+        MenuItem {buffer_res[16]} {
+          label {256x512 PAL}
+          user_data 16 user_data_type long
+          callback cb_SetBufferRes
+          xywh {20 20 30 20} type Radio labelsize 12
+        }
+        MenuItem {buffer_res[17]} {
+          label {320x512 PAL}
+          user_data 17 user_data_type long
+          callback cb_SetBufferRes
+          xywh {20 20 30 20} type Radio labelsize 12
+        }
+        MenuItem {buffer_res[18]} {
+          label {384x512 PAL}
+          user_data 18 user_data_type long
+          callback cb_SetBufferRes
+          xywh {20 20 30 20} type Radio labelsize 12
+        }
+        MenuItem {buffer_res[19]} {
+          label {512x512 PAL}
+          user_data 19 user_data_type long
+          callback cb_SetBufferRes
+          xywh {20 20 30 20} type Radio labelsize 12
+        }
+        MenuItem {buffer_res[20]} {
+          label {640x512 PAL}
+          user_data 20 user_data_type long
+          callback cb_SetBufferRes
+          xywh {20 20 30 20} type Radio labelsize 12
+        }
+      }
+      MenuItem bufferOrderToggle {
+        label {Side-by-side Buffers}
+        callback cb_SetBufferOrder
+        xywh {0 0 30 20} type Toggle labelsize 12
+      }
+    }
+    MenuItem {} {
+      label About
+      callback cb_About
+      xywh {0 0 30 20} labelsize 12
+    }
+  }
+  Fl_Scroll fbArea {
+    label Framebuffer open
+    xywh {7 39 623 334} box DOWN_BOX labelsize 12 align 5 resizable
+  } {
+    Fl_Group vramArea {
+      callback cb_VramArea open
+      xywh {9 41 128 128} box FLAT_BOX color 31
+      code0 {\#include "Fl_VramArea.h"}
+      class Fl_VramArea
+    } {}
+  }
+  Fl_Group {} {open
+    xywh {633 38 267 496}
+  } {
+    Fl_Group {} {
+      label {Snap to} open
+      xywh {633 38 266 26} box ENGRAVED_BOX labelsize 12 align 5
+    } {
+      Fl_Check_Button snapImages {
+        label Images
+        callback cb_SnapOption
+        tooltip {Snap to texture images} xywh {637 44 80 15} down_box DOWN_BOX labelsize 12
+      }
+      Fl_Check_Button snapCluts {
+        label CLUTs
+        callback cb_SnapOption
+        tooltip {Snap to CLUTs (CLUTs do not snap to other CLUTs)} xywh {724 44 80 15} down_box DOWN_BOX labelsize 12
+      }
+      Fl_Check_Button snapGrid {
+        label Grid
+        callback cb_SnapOption
+        tooltip {Snap to grid} xywh {809 44 80 15} down_box DOWN_BOX labelsize 12
+      }
+    }
+    Fl_Group timParams {
+      label {TIM Parameters} open
+      xywh {633 84 266 190} box ENGRAVED_BOX labelsize 12 align 5 deactivate
+    } {
+      Fl_Group {} {
+        label {Image Position} open
+        xywh {640 107 253 35} box ENGRAVED_BOX labelsize 12 align 5
+      } {
+        Fl_Spinner imageXpos {
+          label {X:}
+          callback cb_ImagePosition
+          xywh {662 113 50 21} labelsize 12 minimum 0 value 0 textsize 12
+        }
+        Fl_Spinner imageYpos {
+          label {Y:}
+          callback cb_ImagePosition
+          xywh {737 113 50 21} labelsize 12 minimum 0 value 0 textsize 12
+        }
+      }
+      Fl_Group clutParams {
+        label {CLUT Position} open
+        xywh {640 162 253 35} box ENGRAVED_BOX labelsize 12 align 5
+      } {
+        Fl_Spinner clutXpos {
+          label {X:}
+          callback cb_ClutPosition
+          xywh {662 168 50 21} labelsize 12 minimum 0 value 0 textsize 12
+        }
+        Fl_Spinner clutYpos {
+          label {Y:}
+          callback cb_ClutPosition
+          xywh {737 168 50 21} labelsize 12 minimum 0 value 0 textsize 12
+        }
+      }
+      Fl_Group blendParams {
+        label {Blend Operator (editor view only)} open
+        xywh {640 217 253 47} box ENGRAVED_BOX labelsize 12 align 5
+      } {
+        Fl_Round_Button {blendMode[0]} {
+          label {50%+50%}
+          user_data 0 user_data_type long
+          callback cb_ImgBlendMode
+          xywh {645 224 98 15} type Radio down_box ROUND_DOWN_BOX labelsize 12
+        }
+        Fl_Round_Button {blendMode[1]} {
+          label {100%+100%}
+          user_data 1 user_data_type long
+          callback cb_ImgBlendMode
+          xywh {743 224 114 15} type Radio down_box ROUND_DOWN_BOX labelsize 12
+        }
+        Fl_Round_Button {blendMode[2]} {
+          label {100%-100%}
+          user_data 2 user_data_type long
+          callback cb_ImgBlendMode
+          xywh {645 244 98 15} type Radio down_box ROUND_DOWN_BOX labelsize 12
+        }
+        Fl_Round_Button {blendMode[3]} {
+          label {100%+25%}
+          user_data 3 user_data_type long
+          callback cb_ImgBlendMode
+          xywh {743 244 98 15} type Radio down_box ROUND_DOWN_BOX labelsize 12
+        }
+      }
+    }
+    Fl_Group {} {open
+      xywh {633 524 266 10} resizable
+    } {}
+  }
+  Fl_Group {} {open
+    xywh {7 392 623 142}
+  } {
+    Fl_Group {} {open
+      xywh {388 392 87 142}
+    } {
+      Fl_Button {} {
+        label {Add TIM}
+        callback addItem_cb
+        xywh {389 393 86 23} labelsize 12
+      }
+      Fl_Button {} {
+        label {Remove TIM}
+        callback delItem_cb
+        xywh {389 420 86 25} labelsize 12
+      }
+      Fl_Check_Button deprecatePaths {
+        label {Deprecate
+File Paths}
+        callback cb_deprecatePaths
+        tooltip {Replaces references of your username in the file path with a randomly selected insult.} xywh {388 510 87 24} down_box DOWN_BOX labelsize 12
+      }
+    }
+    Fl_Table list {
+      label Files
+      callback cb_TimList open
+      xywh {7 392 373 142} selection_color 136 labelsize 12 align 5 resizable
+      code0 {\#include "Fl_TimList.h"}
+      class Fl_TimList
+    } {}
+    Fl_Group {} {
+      label {View Control} open
+      xywh {485 392 145 142} box ENGRAVED_FRAME labelsize 12 align 5
+    } {
+      Fl_Spinner {} {
+        label Zoom
+        callback cb_ZoomValue
+        xywh {492 400 44 15} labelsize 12 align 8 when 1 maximum 8 textsize 12
+      }
+      Fl_Check_Button overlapToggle {
+        label {Display Overlap}
+        callback cb_OverlapToggle
+        tooltip {Images and CLUTs will display a solid color when overlapping.} xywh {490 419 135 16} down_box DOWN_BOX labelsize 12
+      }
+      Fl_Check_Button semiTransToggle {
+        label {Semi-Transparency}
+        callback cb_ToggleSemiTrans
+        xywh {490 435 135 15} down_box DOWN_BOX labelsize 12
+      }
+      Fl_Choice groupList {
+        label {Show Group}
+        callback cb_GroupChoice open
+        xywh {492 506 130 20} down_box BORDER_BOX labelsize 12 align 5 textsize 12
+      } {}
+    }
+  }
+}

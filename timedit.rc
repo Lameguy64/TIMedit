@@ -1,0 +1,23 @@
+APPICON		ICON icons\timedit.ico
+
+1 VERSIONINFO
+
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "040904E4"
+    BEGIN
+      VALUE "CompanyName", "Meido-Tek Productions"
+      VALUE "FileDescription", "TIM Management and Editing Tool for PS1"
+      VALUE "InternalName", "timedit"
+      VALUE "LegalCopyright", "Mozilla Public License v2"
+      VALUE "OriginalFilename", "timedit.exe"
+      VALUE "ProductName", "TIMedit"
+      VALUE "ProductVersion", "0.10a"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x409, 1252
+  END
+END

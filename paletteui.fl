@@ -1,0 +1,130 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0304
+header_name {.h}
+code_name {.cxx}
+widget_class PaletteUI {
+  label {CLUT Editor} open
+  xywh {783 285 532 400} type Double
+  class Fl_Double_Window modal xclass {timid.palette} visible
+} {
+  Fl_Group {} {
+    label {Entry Color} open
+    xywh {5 19 260 99} box ENGRAVED_BOX labelsize 12 align 5
+  } {
+    Fl_Value_Slider redSlider {
+      label R
+      callback cb_ClutSliderChange
+      xywh {23 26 187 19} type {Horz Knob} labelsize 12 align 4 maximum 31 step 1 textsize 12
+    }
+    Fl_Value_Slider greenSlider {
+      label G
+      callback cb_ClutSliderChange
+      xywh {23 50 187 19} type {Horz Knob} labelsize 12 align 4 maximum 31 step 1 textsize 12
+    }
+    Fl_Value_Slider blueSlider {
+      label B
+      callback cb_ClutSliderChange
+      xywh {23 74 187 19} type {Horz Knob} labelsize 12 align 4 maximum 31 step 1 textsize 12
+    }
+    Fl_Check_Button stpToggle {
+      label {Semi-transparent}
+      callback cb_ClutStpToggle
+      xywh {23 98 187 15} down_box DOWN_BOX labelsize 12
+    }
+    Fl_Box colorBox {
+      xywh {215 26 43 43} box THIN_UP_BOX color 41
+    }
+  }
+  Fl_Group palette {
+    label {CLUT Entries}
+    callback cb_PaletteClick open
+    xywh {5 135 260 260} box DOWN_BOX labelsize 12 align 5 when 1
+    code0 {\#include "Fl_ClutPalette.h"}
+    class Fl_ClutPalette
+  } {}
+  Fl_Scroll preview {
+    label Preview open
+    xywh {270 137 256 256} box FLAT_BOX color 41 labelsize 12 align 5
+  } {}
+  Fl_Return_Button {} {
+    label Ok
+    callback cb_ClutOkay
+    xywh {448 19 78 20} labelsize 12
+  }
+  Fl_Button {} {
+    label Cancel
+    callback cb_ClutCancel
+    xywh {448 44 78 20} labelsize 12
+  }
+  Fl_Button {} {
+    label Revert
+    callback cb_ClutRevert
+    xywh {448 69 78 20} labelsize 12
+  }
+  Fl_Spinner clutIndex {
+    label {CLUT Slot}
+    callback cb_ClutSlotValue
+    xywh {270 18 75 21} labelsize 12 align 5 minimum 0 value 0 textsize 12
+  }
+  Fl_Button {} {
+    label {New Slot}
+    callback cb_ClutNewSlot
+    xywh {270 44 75 20} labelsize 12
+  }
+  Fl_Button {} {
+    label {Delete Slot}
+    callback cb_ClutDeleteSlot
+    xywh {270 69 75 20} labelsize 12
+  }
+  Fl_Spinner zoomValue {
+    label Zoom
+    callback cb_ClutZoom
+    xywh {500 120 26 16} labelsize 10 when 1 maximum 8 textsize 10
+  }
+  Fl_Choice {} {
+    label Mode open
+    xywh {380 120 85 16} down_box BORDER_BOX labelsize 11 textsize 11
+  } {
+    MenuItem {drawmode[0]} {
+      label Normal
+      user_data {-1} user_data_type long
+      callback cb_ClutPrevDrawMode
+      xywh {0 0 30 20} labelsize 11
+    }
+    MenuItem {drawmode[1]} {
+      label {0:50%+50%}
+      user_data 0 user_data_type long
+      callback cb_ClutPrevDrawMode
+      xywh {0 0 30 20} labelsize 11
+    }
+    MenuItem {drawmode[2]} {
+      label {1:100%+100%}
+      user_data 1 user_data_type long
+      callback cb_ClutPrevDrawMode
+      xywh {20 20 30 20} labelsize 11
+    }
+    MenuItem {drawmode[3]} {
+      label {2:100%-100%}
+      user_data 2 user_data_type long
+      callback cb_ClutPrevDrawMode
+      xywh {40 40 30 20} labelsize 11
+    }
+    MenuItem {drawmode[4]} {
+      label {3:100%+25%}
+      user_data 3 user_data_type long
+      callback cb_ClutPrevDrawMode
+      xywh {50 50 30 20} labelsize 11
+    }
+    MenuItem {drawmode[5]} {
+      label {STP Mask}
+      user_data 4 user_data_type long
+      callback cb_ClutPrevDrawMode
+      xywh {60 60 30 20} labelsize 11
+    }
+  }
+  Fl_Button pickToggle {
+    label Pick
+    callback cb_ClutPickMode selected
+    xywh {235 120 30 16} type Toggle labelsize 11
+  }
+}

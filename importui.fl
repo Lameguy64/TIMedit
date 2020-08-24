@@ -1,0 +1,282 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0304
+header_name {.h}
+code_name {.cxx}
+widget_class ImportUI {
+  label {Import Options} open
+  xywh {862 271 540 410} type Double resizable
+  class Fl_Double_Window modal xclass {timedit.import} visible
+} {
+  Fl_Scroll preview {
+    label Preview open selected
+    xywh {191 20 342 355} box FLAT_BOX color 40 labelsize 12 align 5 resizable
+  } {}
+  Fl_Group {} {open
+    xywh {5 380 528 23}
+  } {
+    Fl_Choice drawMode {
+      label Mode
+      callback cb_ImportDrawMode open
+      xywh {368 380 85 15} down_box BORDER_BOX labelsize 11 when 1 textsize 11
+    } {
+      MenuItem {} {
+        label Normal
+        user_data {-1} user_data_type long
+        xywh {5 5 30 20} labelsize 11
+      }
+      MenuItem {} {
+        label {50%+50%}
+        user_data 0 user_data_type long
+        xywh {5 5 30 20} labelsize 11
+      }
+      MenuItem {} {
+        label {100%+100%}
+        user_data 1 user_data_type long
+        xywh {5 5 30 20} labelsize 11
+      }
+      MenuItem {} {
+        label {100%-100%}
+        user_data 2 user_data_type long
+        xywh {5 5 30 20} labelsize 11
+      }
+      MenuItem {} {
+        label {100%+25%}
+        user_data 3 user_data_type long
+        xywh {5 5 30 20} labelsize 11
+      }
+      MenuItem {} {
+        label {STP Mask}
+        user_data 4 user_data_type long
+        xywh {5 5 30 20} labelsize 11
+      }
+    }
+    Fl_Spinner zoomValue {
+      label Zoom
+      callback cb_ImportZoom
+      xywh {493 380 40 15} labelsize 11 maximum 8 textsize 11
+    }
+    Fl_Return_Button okayButton {
+      label Ok
+      callback cb_ImportOkay
+      xywh {5 380 89 23} labelsize 12
+    }
+    Fl_Button {} {
+      label Cancel
+      callback cb_ImportCancel
+      xywh {96 380 90 23} labelsize 12
+    }
+    Fl_Group {} {open
+      xywh {191 380 29 23} resizable
+    } {}
+  }
+  Fl_Tabs {} {open
+    xywh {6 3 180 372}
+  } {
+    Fl_Group {} {
+      label Conversion open
+      xywh {6 20 180 355} labelsize 12 resizable
+    } {
+      Fl_Group {} {
+        label {Color Conversion} open
+        xywh {11 39 170 108} box ENGRAVED_BOX labelsize 12 align 5
+      } {
+        Fl_Value_Output srcDepth {
+          label {Original Bpp}
+          xywh {106 44 70 15} box FLAT_BOX labelsize 12 textsize 12
+        }
+        Fl_Choice depthChoice {
+          label {Target Bpp}
+          callback cb_ImportDepthChoice open
+          tooltip {Specifies the color depth the texture will be converted too.} xywh {106 64 70 20} down_box BORDER_BOX labelsize 12 textsize 12
+        } {
+          MenuItem {} {
+            label {4-bit}
+            xywh {14 14 30 20} labelsize 12
+          }
+          MenuItem {} {
+            label {8-bit}
+            xywh {14 14 30 20} labelsize 12
+          }
+          MenuItem {} {
+            label {16-bit}
+            xywh {14 14 30 20} labelsize 12
+          }
+          MenuItem {} {
+            label {24-bit}
+            xywh {14 14 30 20} labelsize 12
+          }
+        }
+        Fl_Check_Button ditherToggle {
+          label Dithering
+          callback cb_ImportDither
+          tooltip {Dither the image to improve smoothness of gradients (only works when using Simple quantizer and 16-bit color depth).} xywh {16 129 160 15} down_box DOWN_BOX labelsize 12
+        }
+        Fl_Choice quantizeMode {
+          label Quantizer
+          callback cb_ImportQuantChoice open
+          tooltip {Specifies the color quantization algorithm to use in converting the source image to lower color depths.} xywh {106 86 70 21} down_box BORDER_BOX labelsize 12 textsize 12
+        } {
+          MenuItem {} {
+            label Simple
+            xywh {9 9 30 20} labelsize 12
+          }
+          MenuItem {} {
+            label {Xiaolin Wu}
+            xywh {9 9 30 20} labelsize 12
+          }
+          MenuItem {} {
+            label NeuQuant
+            xywh {9 9 30 20} labelsize 12
+          }
+        }
+        Fl_Value_Output vmWidth {
+          label {Texture Width}
+          xywh {106 110 70 14} box FLAT_BOX labelsize 12 textsize 12
+        }
+      }
+      Fl_Group stpOptions {
+        label {Semi-Transparency Options} open
+        xywh {11 161 170 39} box ENGRAVED_BOX labelsize 12 align 5
+      } {
+        Fl_Check_Button stpNonBlack {
+          label {Set STP on Non Black}
+          callback cb_ImportUpdate
+          tooltip {Colors that are not pure black will be set with a STP bit, which will be drawn semi-transparently if semi-transparency is enabled.} xywh {16 166 160 15} down_box DOWN_BOX labelsize 12
+        }
+        Fl_Check_Button stpBlack {
+          label {Set STP on Full Black}
+          callback cb_ImportUpdate
+          tooltip {Colors that are pure black will be set with a STP bit, which will be drawn opaque.} xywh {16 182 160 15} down_box DOWN_BOX labelsize 12
+        }
+      }
+      Fl_Group {} {open
+        xywh {6 361 180 14} resizable
+      } {}
+      Fl_Group {} {
+        label {Transparency Mask} open
+        xywh {11 215 170 145} box ENGRAVED_BOX labelsize 12 align 5
+      } {
+        Fl_Check_Button stpNormal {
+          label {Pure Black}
+          callback cb_ImportUpdate
+          tooltip {Transparency is specified by pixels that are pure black.} xywh {16 220 160 15} type Radio down_box DOWN_BOX labelsize 12
+        }
+        Fl_Check_Button stpAlpha {
+          label {Alpha Channel}
+          callback cb_ImportUpdate
+          tooltip {Uses the alpha channel (if available) of the source image as the transparency mask. Pure black pixels will be set with a STP bit if the alpha of the pixel is greater than the threshold.} xywh {16 238 160 15} type Radio down_box DOWN_BOX labelsize 12
+        }
+        Fl_Group alphaCtrls {open
+          xywh {18 253 158 53} box ENGRAVED_BOX labelsize 12 align 5 deactivate
+        } {
+          Fl_Value_Input alphaValue {
+            label {Alpha Threshold}
+            callback cb_ImportUpdateV
+            tooltip {Specifies the alpha value to be considered as fully transparent.} xywh {126 259 45 21} labelsize 12 maximum 255 step 1 value 127 textsize 12
+          }
+          Fl_Value_Input stpAlphaValue {
+            label {STP Threshold}
+            callback cb_ImportUpdateV
+            tooltip {Specifies the alpha value to be considered as semi transparent. A value less than Alpha Threshold disables this feature.} xywh {126 280 45 21} labelsize 12 maximum 255 step 1 value 255 textsize 12
+          }
+        }
+        Fl_Check_Button colorKey {
+          label {Color Key/Index}
+          callback cb_ImportUpdate
+          tooltip {Use color key or color index to use as a transparency mask.} xywh {16 311 160 15} type Radio down_box DOWN_BOX labelsize 12
+        }
+        Fl_Group colorKeyCtrls {open
+          xywh {18 327 158 28} box ENGRAVED_BOX deactivate
+        } {
+          Fl_Button {} {
+            label Select
+            callback cb_ImportSetColorKey
+            tooltip {Select color key from a color chooser.} xywh {46 331 60 20} labelsize 12
+          }
+          Fl_Button pickButton {
+            label Pick
+            callback cb_ImportColorPick
+            tooltip {Pick a color by clicking on the image.} xywh {111 331 60 20} type Toggle labelsize 12
+          }
+          Fl_Box colorKeyBox {
+            xywh {22 331 20 20} box FLAT_BOX color 32 labelsize 12
+          }
+        }
+      }
+    }
+    Fl_Group {} {
+      label {Color Adjust} open
+      xywh {6 20 180 355} labelsize 12 hide
+    } {
+      Fl_Check_Button colorAdjToggle {
+        label {Apply Color Adjust}
+        callback cb_ColorAdjToggle
+        xywh {11 30 169 15} down_box DOWN_BOX labelsize 12
+      }
+      Fl_Group {} {
+        label General open
+        xywh {11 65 170 70} box ENGRAVED_BOX labelsize 12 align 5
+      } {
+        Fl_Value_Slider {generalAdj[0]} {
+          label R
+          user_data 0 user_data_type long
+          callback cb_GeneralColAdj
+          xywh {29 71 147 19} type Horizontal labelsize 12 align 4 maximum 2 value 1 textsize 12
+        }
+        Fl_Value_Slider {generalAdj[1]} {
+          label G
+          user_data 1 user_data_type long
+          callback cb_GeneralColAdj
+          xywh {29 91 147 19} type Horizontal labelsize 12 align 4 maximum 2 value 1 textsize 12
+        }
+        Fl_Value_Slider {generalAdj[2]} {
+          label B
+          user_data 2 user_data_type long
+          callback cb_GeneralColAdj
+          xywh {29 111 147 19} type Horizontal labelsize 12 align 4 maximum 2 value 1 textsize 12
+        }
+      }
+      Fl_Group {} {
+        label {STP Colors} open
+        xywh {11 157 170 120} box ENGRAVED_BOX labelsize 12 align 5
+      } {
+        Fl_Value_Slider {blendAdj[0]} {
+          label R
+          user_data 0 user_data_type long
+          callback cb_BlendColAdj
+          xywh {29 163 147 19} type Horizontal labelsize 12 align 4 maximum 2 value 1 textsize 12
+        }
+        Fl_Value_Slider {blendAdj[1]} {
+          label G
+          user_data 1 user_data_type long
+          callback cb_BlendColAdj
+          xywh {29 183 147 19} type Horizontal labelsize 12 align 4 maximum 2 value 1 textsize 12
+        }
+        Fl_Value_Slider {blendAdj[2]} {
+          label B
+          user_data 2 user_data_type long
+          callback cb_BlendColAdj
+          xywh {29 203 147 19} type Horizontal labelsize 12 align 4 maximum 2 value 1 textsize 12
+        }
+        Fl_Check_Button {invertChan[0]} {
+          label {Invert Red}
+          callback cb_ImportChanInv
+          xywh {16 225 160 15} down_box DOWN_BOX labelsize 12
+        }
+        Fl_Check_Button {invertChan[1]} {
+          label {Invert Green}
+          callback cb_ImportChanInv
+          xywh {16 241 160 15} down_box DOWN_BOX labelsize 12
+        }
+        Fl_Check_Button {invertChan[2]} {
+          label {Invert Blue}
+          callback cb_ImportChanInv
+          xywh {16 257 160 15} down_box DOWN_BOX labelsize 12
+        }
+      }
+      Fl_Group {} {open
+        xywh {10 355 171 15} resizable
+      } {}
+    }
+  }
+}
