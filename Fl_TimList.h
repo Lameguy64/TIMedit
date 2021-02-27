@@ -2,7 +2,7 @@
 #define FL_TIMLIST_H
 
 #include <vector>
-#include <Fl/Fl_Table_Row.H>
+#include <FL/Fl_Table_Row.H>
 
 #include "TimItem.h"
 

@@ -1,4 +1,4 @@
-#include <Fl/Fl.H>
+#include <FL/Fl.H>
 #include "TimItem.h"
 
 std::string MakePathRelative(const char* path, const char* base);
@@ -122,9 +122,9 @@ void TimItem::OutputXML(tinyxml2::XMLDocument *doc,
 	element->InsertEndChild(base);
 }
 
-void TimItem::ParseXML(tinyxml2::XMLElement* tim_element)
+void TimItem::ParseXML(const tinyxml2::XMLElement* tim_element)
 {
-	tinyxml2::XMLElement *o,*oo;
+	const tinyxml2::XMLElement *o,*oo;
 	
 	if( !tim_element->FindAttribute("source") )
 		return;

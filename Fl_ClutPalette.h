@@ -3,12 +3,12 @@
 #ifndef FL_CLUTPALETTE_H
 #define FL_CLUTPALETTE_H
 
-#include <Fl/Fl_Widget.H>
+#include <FL/Fl_Widget.H>
+
 #include "TimImage.h"
 
 class Fl_ClutPalette : public Fl_Widget {
 public:
-	
 	Fl_ClutPalette(int X, int Y, int W, int H, const char *L);
 	virtual ~Fl_ClutPalette();
 	
@@ -32,19 +32,15 @@ public:
 	}
 	
 protected:
-		
 	int handle(int e);
 	void draw();
 
 private:
-	
 	int _selected;
 	int _focus_select;
 	
 	TimImage *_edit_image;
 	int _edit_clut;
-	
 };
 
 #endif /* FL_CLUTPALETTE_H */
-

@@ -10,14 +10,19 @@ AFILES		= $(notdir $(wildcard *.s))
 IMAGES		= timedit.png
 OFILES		= $(addprefix build/,$(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(IMAGES:.png=.o))
 
-LIBS		= -lfreeimage -ltinyxml2 -lfltk_images -lfltk_png -lfltk_z -lfltk
+#LIBS		= -lfreeimage -ltinyxml2 -lfltk_images -lfltk_png -lfltk_z -lfltk
+LIBS		= -lfreeimage -ltinyxml2 -lfltk_images -lfltk
 
 ifeq "$(CONF)" "debug"
 CFLAGS		= -g
 CXXFLAGS	= $(CFLAGS)
 AFLAGS		=
 else
+ifeq "$(OS)" "Windows_NT"
 CFLAGS		= -mwindows -O2
+else
+CFLAGS		= -O2
+endif
 CXXFLAGS	= $(CFLAGS)
 AFLAGS		=
 endif
@@ -35,8 +40,13 @@ CC		= gcc
 CXX		= g++
 AS		= as
 
+ifeq "$(OS)" "Windows_NT"
 all: $(OFILES) $(WINRES)
 	$(CXX) $(CXXFLAGS) $(OFILES) $(LIBDIRS) $(LIBS) $(WINRES) -o $(TARGET)
+else
+all: $(OFILES)
+	$(CXX) $(CXXFLAGS) $(OFILES) $(LIBDIRS) $(LIBS) -o $(TARGET)
+endif
 
 clean:
 	rm -Rf build $(TARGET)
@@ -44,7 +54,7 @@ clean:
 build/%.o: %.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
-	
+
 build/%.o: %.cxx
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
@@ -52,9 +62,9 @@ build/%.o: %.cxx
 build/%.o: icons/%.png
 	@mkdir -p $(dir $@)
 	ld -r -b binary -o $@ $<
-	
+
 build/%.res: %.rc
 	windres $< -O coff $@
-	
+
 install:
 	cp -p $(TARGET) $(INSTALL)/$(TARGET)
