@@ -23,7 +23,7 @@ MainUI *ui;
 void *img_selected = NULL;
 
 
-std::string user_name;
+std::string user_name = "user_name";
 std::string replace_name;
 
 #define REPLACE_NAME_COUNT 6
@@ -1341,8 +1341,7 @@ void cb_About(Fl_Menu_ *w, void *u) {
 	fl_message("TIMedit - PSX TIM conversion/editing tool\nBy Lameguy64");
 }
 
-extern char binary_icons_timedit_png_start[];
-//extern unsigned int _binary_icons_timedit_png_size;
+extern char _binary_icons_timedit_png_start[];
 
 int main(int argc, char** argv)
 {
@@ -1352,7 +1351,6 @@ int main(int argc, char** argv)
 		
 		gettimeofday(&t, nullptr);
 		srand(t.tv_sec);
-		user_name = getenv("USERNAME");
 	}
 	
 	FreeImage_Initialise(false);
@@ -1360,7 +1358,7 @@ int main(int argc, char** argv)
 	ui = new MainUI;
 
 	app_icon = new Fl_PNG_Image( NULL, 
-		(unsigned char*)binary_icons_timedit_png_start, 
+		(unsigned char*)_binary_icons_timedit_png_start,
 		400);
 		
 	ui->icon( app_icon );
