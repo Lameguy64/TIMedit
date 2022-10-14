@@ -242,7 +242,7 @@ std::string MakePathRelative(const char* path, const char* base)
 	// If file is local, simply trim off the file path
 	if( output.empty() )
 	{
-		char *c = strrchr(path, '\\');
+		const char *c = strrchr(path, '\\');
 		if( c == nullptr )
 			return output;
 		output = c+1;
