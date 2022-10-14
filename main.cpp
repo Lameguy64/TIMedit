@@ -2,12 +2,12 @@
 #include <sys/time.h>
 #include <vector>
 
-#include <Fl/Fl.H>
-#include <Fl/Fl_Box.H>
-#include <Fl/Fl_Native_File_Chooser.H>
-#include <Fl/Fl_PNG_Image.H>
-#include <Fl/fl_message.H>
-#include <Fl/fl_draw.H>
+#include <FL/Fl.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Native_File_Chooser.H>
+#include <FL/Fl_PNG_Image.H>
+#include <FL/fl_message.H>
+#include <FL/fl_draw.H>
 #include <tinyxml2.h>
 #include <FreeImage.h>
 
