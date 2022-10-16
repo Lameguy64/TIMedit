@@ -1,7 +1,7 @@
 #include <string>
-#include <Fl/Fl_Color_Chooser.H>
-#include <Fl/Fl_Native_File_Chooser.H>
-#include <Fl/fl_message.H>
+#include <FL/Fl_Color_Chooser.H>
+#include <FL/Fl_Native_File_Chooser.H>
+#include <FL/fl_message.H>
 #include <FreeImage.h>
 #include "mainui.h"
 #include "importui.h"
@@ -9,15 +9,14 @@
 #include "Fl_TimImage.h"
 	
 extern MainUI					*ui;
-extern std::string				ctx_project;
+extern std::filesystem::path ctx_project;
 extern std::vector<TimItem*>	ctx_items;
 
-std::string MakePathAbsolute(const char* relpath, const char* base, int has_file = false);
 void RegisterTimItem(TimItem* item, int refresh = 0);
 
 
 ImportUI		*import_ui;
-std::string		import_image;
+std::filesystem::path import_image;
 ImportParams	import_params;
 ImportImage		*importer;
 TimItem			*import_item;
@@ -153,7 +152,7 @@ static void SetControls(ImportParams* params)
 
 void cb_ImportOkayAlt(Fl_Return_Button* w, void* u);
 
-void do_import(const char* filename, ImportParams *params)
+void do_import(const std::filesystem::path &filename, ImportParams *params)
 {
 	fl_message_title("Error Importing");
 	
@@ -257,7 +256,7 @@ void do_import(const char* filename, ImportParams *params)
 	delete importer;
 }
 
-void cb_ImportImage(Fl_Menu_ *w, void *u)
+void cb_ImportImage(Fl_Menu_*, void*)
 {
 	import_image.clear();
 	if( !select_image() )
@@ -274,10 +273,10 @@ void cb_ImportImage(Fl_Menu_ *w, void *u)
 	}
 	
 	reimport_item = NULL;
-	do_import( import_image.c_str(), NULL );
+	do_import(import_image, NULL);
 }
 
-void cb_ReimportTim(Fl_Menu_* w, long u)
+void cb_ReimportTim(Fl_Menu_*, long u)
 {
 	if( !img_selected )
 		return;
@@ -287,7 +286,7 @@ void cb_ReimportTim(Fl_Menu_* w, long u)
 	TimItem *tim;
 	
 	{
-		size_t found = -1;
+		int found = -1;
 		for( size_t i=0; i<ctx_items.size(); i++ )
 		{
 			if( tim_img == &ctx_items[i]->tim )
@@ -312,17 +311,18 @@ void cb_ReimportTim(Fl_Menu_* w, long u)
 	
 	fl_message_title( "Error Importing" );
 	
-	std::string abs_file;
+	std::filesystem::path abs_file;
 	
-	if( tim->src_file[1] == ':' )
+	if( tim->src_file.is_absolute() )
 	{
 		abs_file = tim->src_file;
 	}
 	else
 	{
-		abs_file = MakePathAbsolute(
-			tim->src_file.c_str(), ctx_project.c_str(), 1 );
+		abs_file = ctx_project.parent_path();
+		abs_file /= tim->src_file;
 	}
+	abs_file = abs_file.lexically_normal();
 	
 	if( !u )
 	{
@@ -338,7 +338,7 @@ void cb_ReimportTim(Fl_Menu_* w, long u)
 		printf( "Attempt to import: %s\n", abs_file.c_str() );
 #endif /* DEBUG */
 
-		if( importer->LoadSource( abs_file.c_str() ) )
+		if (importer->LoadSource(abs_file))
 		{
 			fl_message("Source image not found or cannot be loaded.");
 			delete importer;
@@ -363,7 +363,7 @@ void cb_ReimportTim(Fl_Menu_* w, long u)
 	}
 }
 
-void cb_ImportDepthChoice(Fl_Choice *w, void *u)
+void cb_ImportDepthChoice(Fl_Choice*, void*)
 {
 	switch( import_ui->depthChoice->value() )
 	{
@@ -422,7 +422,7 @@ void cb_ImportDepthChoice(Fl_Choice *w, void *u)
 	
 }
 
-void cb_ImportDither(Fl_Check_Button *w, void *u)
+void cb_ImportDither(Fl_Check_Button*, void*)
 {
 	import_params.dithering = import_ui->ditherToggle->value();
 	if( !update_tim() )
@@ -434,7 +434,7 @@ void cb_ImportDither(Fl_Check_Button *w, void *u)
 	}
 }
 
-void cb_ImportZoom(Fl_Spinner *w, void *u)
+void cb_ImportZoom(Fl_Spinner*, void*)
 {
 	int zoom = import_ui->zoomValue->value();
 	int p_w,p_h;
@@ -449,12 +449,12 @@ void cb_ImportZoom(Fl_Spinner *w, void *u)
 	import_ui->preview->redraw();
 }
 
-void cb_ImportCancel(Fl_Button *w, void *u)
+void cb_ImportCancel(Fl_Button*, void*)
 {
 	import_ui->hide();
 }
 
-void cb_ImportQuantChoice(Fl_Choice *w, void *u)
+void cb_ImportQuantChoice(Fl_Choice*, void*)
 {
 	import_params.quant_mode = import_ui->quantizeMode->value();
 	
@@ -476,7 +476,7 @@ void cb_ImportQuantChoice(Fl_Choice *w, void *u)
 	}
 }
 
-void cb_ImportUpdate(Fl_Check_Button *w, void *u)
+void cb_ImportUpdate(Fl_Check_Button*, void*)
 {
 	import_params.color_stp = import_ui->stpNonBlack->value();
 	import_params.black_stp = import_ui->stpBlack->value();
@@ -521,7 +521,7 @@ void cb_ImportUpdateV(Fl_Value_Input *w, void *u)
 	cb_ImportUpdate((Fl_Check_Button*)w, u);
 }
 
-void cb_ImportDrawMode(Fl_Choice *w, void *u)
+void cb_ImportDrawMode(Fl_Choice*, void*)
 {
 	if( import_ui->drawMode->value() == 0 )
 	{
@@ -534,7 +534,7 @@ void cb_ImportDrawMode(Fl_Choice *w, void *u)
 	
 }
 
-void cb_ImportSetColorKey(Fl_Button *w, void *u)
+void cb_ImportSetColorKey(Fl_Button*, void*)
 {
 	uchar key_r,key_g,key_b;
 	
@@ -559,10 +559,9 @@ void cb_ImportSetColorKey(Fl_Button *w, void *u)
 	
 }
 
-void cb_ImportColorPickCtrl(Fl_Widget *w, void *u)
+void cb_ImportColorPickCtrl(Fl_Widget*, void*)
 {
 	int pick_x,pick_y;
-	int pix;
 	RGBQUAD pix_rgb;
 	TIM_PIX_16 pix_tim;
 	
@@ -609,14 +608,14 @@ void cb_ImportColorPickCtrl(Fl_Widget *w, void *u)
 	}
 }
 
-void cb_ImportColorPick(Fl_Button *w, void *u)
+void cb_ImportColorPick(Fl_Button*, void*)
 {
 	import_item->ctrl->PickMode(1);
 	import_item->ctrl->callback(cb_ImportColorPickCtrl);
 	pick_state = 1;
 }
 
-void cb_ImportOkay(Fl_Return_Button *w, void *u)
+void cb_ImportOkay(Fl_Return_Button*, void*)
 {
 	Fl_Native_File_Chooser chooser;
 	
@@ -631,9 +630,8 @@ void cb_ImportOkay(Fl_Return_Button *w, void *u)
 	
 	import_item->file = chooser.filename();
 	
-	if( import_item->file.find(".") == std::string::npos )
-	{
-		import_item->file.append(".tim");
+	if (!import_item->file.has_extension()) {
+		import_item->file += (".tim");
 	}
 	
 #ifdef DEBUG
@@ -645,7 +643,7 @@ void cb_ImportOkay(Fl_Return_Button *w, void *u)
 	import_item->tim.SetClutPosition(0, 480);
 	
 	fl_message_title("Error writing TIM");
-	switch( import_item->tim.SaveTim(import_item->file.c_str()) )
+	switch( import_item->tim.SaveTim(import_item->file) )
 	{
 		case TimImage::ERR_NO_IMAGE:
 			fl_message("No image to write.");
@@ -669,7 +667,7 @@ void cb_ImportOkay(Fl_Return_Button *w, void *u)
 	
 }
 
-void cb_ImportOkayAlt(Fl_Return_Button *w, void *u)
+void cb_ImportOkayAlt(Fl_Return_Button*, void*)
 {
 	reimport_item->tim.Copy(&import_item->tim, 0);
 	
@@ -685,7 +683,7 @@ void cb_ImportOkayAlt(Fl_Return_Button *w, void *u)
 	import_created = 1;
 }
 
-void cb_ColorAdjToggle(Fl_Check_Button *w, void *u)
+void cb_ColorAdjToggle(Fl_Check_Button*, void*)
 {
 	import_params.color_adjust = import_ui->colorAdjToggle->value();
 	
@@ -693,7 +691,7 @@ void cb_ColorAdjToggle(Fl_Check_Button *w, void *u)
 		import_item->ctrl->redraw();
 }
 
-void cb_GeneralColAdj(Fl_Value_Slider *w, long slider)
+void cb_GeneralColAdj(Fl_Value_Slider*, long slider)
 {
 	switch(slider)
 	{
@@ -713,7 +711,7 @@ void cb_GeneralColAdj(Fl_Value_Slider *w, long slider)
 			import_item->ctrl->redraw();
 }
 
-void cb_BlendColAdj(Fl_Value_Slider *w, long slider)
+void cb_BlendColAdj(Fl_Value_Slider*, long slider)
 {
 	switch(slider)
 	{
@@ -733,7 +731,7 @@ void cb_BlendColAdj(Fl_Value_Slider *w, long slider)
 			import_item->ctrl->redraw();
 }
 
-void cb_ImportChanInv(Fl_Check_Button* w, void* u)
+void cb_ImportChanInv(Fl_Check_Button*, void*)
 {
 	import_params.inv_red = import_ui->invertChan[0]->value();
 	import_params.inv_grn = import_ui->invertChan[1]->value();

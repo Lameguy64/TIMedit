@@ -1,6 +1,7 @@
 #ifndef TIMIMAGE_H
 #define TIMIMAGE_H
 
+#include <filesystem>
 #include <FreeImage.h>
 
 typedef struct {
@@ -71,8 +72,8 @@ public:
 	TimImage();
 	virtual ~TimImage();
 	
-	TIM_ERR LoadTim(const char *filename);
-	TIM_ERR SaveTim(const char *filename);
+	TIM_ERR LoadTim(const std::filesystem::path &filename);
+	TIM_ERR SaveTim(const std::filesystem::path &filename);
 	
 	TIM_PIX_24 ImagePixel24(int x, int y);
 	

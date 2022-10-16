@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0304
+version 1.0308
 header_name {.h}
 code_name {.cxx}
 widget_class MainUI {
@@ -335,9 +335,6 @@ widget_class MainUI {
         }
       }
     }
-    Fl_Group {} {open
-      xywh {633 524 266 10} resizable
-    } {}
   }
   Fl_Group {} {open
     xywh {7 392 623 142}

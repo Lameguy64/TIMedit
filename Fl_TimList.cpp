@@ -1,6 +1,6 @@
-#include <Fl/fl_draw.H>
-#include <Fl/Fl_Widget.H>
-#include <Fl/Enumerations.H>
+#include <FL/fl_draw.H>
+#include <FL/Fl_Widget.H>
+#include <FL/Enumerations.H>
 #include "Fl_TimList.h"
 
 #define HEADER_FONTFACE FL_HELVETICA_BOLD
@@ -56,7 +56,7 @@ extern std::string replace_name;
 void Fl_TimList::add_item(TimItem* item, int deprecate) {
 	
 	_item itm;
-	int i,tw,th;
+	int tw,th;
 	
 	memset(&itm, 0, sizeof(_item));
 	
@@ -94,6 +94,7 @@ void Fl_TimList::add_item(TimItem* item, int deprecate) {
 
 	if( deprecate )
 	{
+		size_t i;
 		while( (i = path_temp.find(user_name)) != std::string::npos )
 		{
 			path_temp.replace(i, user_name.size(), replace_name);
@@ -158,8 +159,7 @@ TimItem* Fl_TimList::get_item(int row) {
 
 
 void Fl_TimList::del_item(TimItem *item) {
-	
-	size_t index = -1;
+	int index = -1;
 	
 	for( size_t i=0; i<list_items.size(); i++ ) {
 		
@@ -179,11 +179,9 @@ void Fl_TimList::del_item(TimItem *item) {
 	list_items.erase(list_items.begin()+index);
 	
 	rows(list_items.size());
-	
 }
 
 void Fl_TimList::clear() {
-
 	for( size_t R=0; R<list_items.size(); R++ ) {	
 		for( int C=0; C<cols(); C++ ) {
 			
@@ -196,11 +194,9 @@ void Fl_TimList::clear() {
 	list_items.clear();
 	
 	rows(0);
-	
 }
 
 void Fl_TimList::autowidth(int pad) {
-	
 	for(size_t R=0; R<list_items.size(); R++) {
 		
 		for(int C=0; C<cols(); C++) {
@@ -217,7 +213,6 @@ void Fl_TimList::autowidth(int pad) {
 		}
 		
 	}
-	
 }
 
 void Fl_TimList::draw_cell(TableContext context, int R, int C, int X, int Y, int W, int H) {
@@ -228,12 +223,8 @@ void Fl_TimList::draw_cell(TableContext context, int R, int C, int X, int Y, int
 		s = _row_items[R].cols[C].c_str(); 
 	}*/
 	
-	char temp[64];
 	const char *text = "Item";
 	std::string path_temp;
-	size_t pos;
-	int tw,th;
-	
 	
     switch( context ) {
         case CONTEXT_COL_HEADER:
@@ -261,7 +252,7 @@ void Fl_TimList::draw_cell(TableContext context, int R, int C, int X, int Y, int
 			
         case CONTEXT_CELL:
 			
-			if( R < list_items.size() ) {
+			if( static_cast<size_t>(R) < list_items.size() ) {
 				text = list_items[R].text[C];
 			}
 			

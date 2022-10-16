@@ -26,49 +26,44 @@ ImportImage::~ImportImage()
 	}
 }
 
-int ImportImage::LoadSource(const char *filename)
-{	
-	// Check if file exists
-	if( access(filename, F_OK) == -1 )
-	{
+int ImportImage::LoadSource(const std::filesystem::path &filename)
+{
 #ifdef DEBUG
-		printf("ERROR: File not found.\n");
-#endif /* DEBUG */
+	printf("[DEBUG] ImportImage::LoadSource: %s\n", filename.c_str());
+#endif
+	// Check if file exists
+	if( access(filename.c_str(), F_OK) == -1 )
+	{
+		fprintf(stderr, "[ERROR] File not found: %s\n", filename.c_str());
 		return 1;
 	}
 
 	// Determine format of input file
-	FREE_IMAGE_FORMAT fif = FreeImage_GetFileType(filename, 0);
+	FREE_IMAGE_FORMAT fif = FreeImage_GetFileType(filename.c_str(), 0);
 
 	if( fif == FIF_UNKNOWN )
 	{
-		fif = FreeImage_GetFIFFromFilename(filename);
+		fif = FreeImage_GetFIFFromFilename(filename.c_str());
 
 		if( !FreeImage_FIFSupportsReading(fif) )
 		{
-#ifdef DEBUG
-			printf("ERROR: Unknown/unsupported image format.\n");
-#endif /* DEBUG */
+			fprintf(stderr, "[ERROR] Unknown/unsupported image format: %s\n", filename.c_str());
 			return 1;
 		}
 	}
 
 	// Load the input image
-	image = FreeImage_Load(fif, filename, 0);
+	image = FreeImage_Load(fif, filename.c_str(), 0);
 
 	if( image == NULL )
 	{
-#ifdef DEBUG
-		printf("ERROR: Cannot load specified image file.\n");
-#endif /* DEBUG */
+		fprintf(stderr, "[ERROR] Cannot load specified image file: %s\n", filename.c_str());
 		return 1;
 	}
 
 	// Some checks to make sure that the image is really valid
 	if( !FreeImage_HasPixels(image) ) {
-#ifdef DEBUG
-		printf("ERROR: Source image has no pixel data... Somehow.\n");
-#endif /* DEBUG */
+		fprintf(stderr, "[ERROR] Source image has no pixel data... Somehow: %s\n", filename.c_str());
 		FreeImage_Unload(image);
 		image = NULL;
 		return 1;
@@ -498,7 +493,7 @@ TIM_PIX_16 ImportImage::ConvertPixel(BYTE *pix, int has_alpha, ImportParams *par
 		 3, -1,  2, -2
 	};
 	
-	int i,r,g,b;
+	int r,g,b;
 	TIM_PIX_16 pixel;
 	
 	r = pix[2];
@@ -920,7 +915,6 @@ void ImportImage::ProcessTransparency(TIM_PIX_16 *pix, int alpha, ImportParams *
 
 RGBQUAD ImportImage::GetRGBcolor(int x, int y)
 {
-	BYTE pix;
 	RGBQUAD pix_rgb;
 	
 	int h = FreeImage_GetHeight(image)-1;

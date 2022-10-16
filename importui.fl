@@ -1,5 +1,5 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0304
+version 1.0308
 header_name {.h}
 code_name {.cxx}
 widget_class ImportUI {
@@ -65,9 +65,6 @@ widget_class ImportUI {
       callback cb_ImportCancel
       xywh {96 380 90 23} labelsize 12
     }
-    Fl_Group {} {open
-      xywh {191 380 29 23} resizable
-    } {}
   }
   Fl_Tabs {} {open
     xywh {6 3 180 372}
@@ -149,9 +146,6 @@ widget_class ImportUI {
           tooltip {Colors that are pure black will be set with a STP bit, which will be drawn opaque.} xywh {16 182 160 15} down_box DOWN_BOX labelsize 12
         }
       }
-      Fl_Group {} {open
-        xywh {6 361 180 14} resizable
-      } {}
       Fl_Group {} {
         label {Transparency Mask} open
         xywh {11 215 170 145} box ENGRAVED_BOX labelsize 12 align 5
@@ -274,9 +268,6 @@ widget_class ImportUI {
           xywh {16 257 160 15} down_box DOWN_BOX labelsize 12
         }
       }
-      Fl_Group {} {open
-        xywh {10 355 171 15} resizable
-      } {}
     }
   }
 }

@@ -50,14 +50,14 @@ TimImage::~TimImage() {
 	
 }
 
-TimImage::TIM_ERR TimImage::LoadTim(const char *filename) {
+TimImage::TIM_ERR TimImage::LoadTim(const std::filesystem::path &filename) {
 	
 	TIM_HEADER	head;
 	TIM_BLOCK	block;
 	FILE *fp;
 	//int sz;
 	
-	fp = fopen( filename, "rb" );
+	fp = fopen(filename.c_str(), "rb");
 	
 	if( !fp )
 		return ERR_NOT_FOUND;
@@ -152,14 +152,14 @@ TimImage::TIM_ERR TimImage::LoadTim(const char *filename) {
 	
 }
 
-TimImage::TIM_ERR TimImage::SaveTim(const char *filename) {
+TimImage::TIM_ERR TimImage::SaveTim(const std::filesystem::path &filename) {
 	
 	TIM_HEADER	head;
 	TIM_BLOCK	block;
 	FILE *fp;
-	int len;
+	size_t len;
 	
-	fp = fopen(filename, "wb");
+	fp = fopen(filename.c_str(), "wb");
 	
 	if( !fp ) {
 		return ERR_CANT_WRITE;
@@ -223,7 +223,7 @@ TimImage::TIM_ERR TimImage::SaveTim(const char *filename) {
 		len = (block.len-12)-len;
 		
 		if( len > 0 ) {
-			for( int i=0; i<len; i++ ) {
+			for (size_t i=0; i<len; i++) {
 				fputc(0, fp);
 			}
 		}
@@ -241,7 +241,6 @@ TimImage::TIM_ERR TimImage::SaveTim(const char *filename) {
 TIM_PIX_24 TimImage::ImagePixel24(int x, int y) {
 	
 	TIM_PIX_24 pix = { 0 };
-	int v;
 	
 	if( (x < 0) || (x >= im_iw) )
 		return pix;
@@ -316,7 +315,6 @@ int TimImage::PixelIndex(int x, int y)
 TIM_PIX_16 TimImage::ClutPixel(int x, int y) {
 	
 	TIM_PIX_16 pix = { 0 };
-	int v;
 	
 	if( (x < 0) || (x >= cl_w) )
 		return pix;
@@ -333,7 +331,6 @@ TIM_PIX_16 TimImage::ClutPixel(int x, int y) {
 void TimImage::SetClutPixel(int x, int y, short r, short g, short b, short i)
 {
 	TIM_PIX_16 pix;
-	int v;
 	
 	if( (x < 0) || (x >= cl_w) )
 		return;
