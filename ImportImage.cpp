@@ -26,10 +26,10 @@ ImportImage::~ImportImage()
 	}
 }
 
-int ImportImage::LoadSource(const char *filename)
+int ImportImage::LoadSource(const std::filesystem::path &filename)
 {	
 	// Check if file exists
-	if( access(filename, F_OK) == -1 )
+	if( access(filename.c_str(), F_OK) == -1 )
 	{
 #ifdef DEBUG
 		printf("ERROR: File not found.\n");
@@ -38,11 +38,11 @@ int ImportImage::LoadSource(const char *filename)
 	}
 
 	// Determine format of input file
-	FREE_IMAGE_FORMAT fif = FreeImage_GetFileType(filename, 0);
+	FREE_IMAGE_FORMAT fif = FreeImage_GetFileType(filename.c_str(), 0);
 
 	if( fif == FIF_UNKNOWN )
 	{
-		fif = FreeImage_GetFIFFromFilename(filename);
+		fif = FreeImage_GetFIFFromFilename(filename.c_str());
 
 		if( !FreeImage_FIFSupportsReading(fif) )
 		{
@@ -54,7 +54,7 @@ int ImportImage::LoadSource(const char *filename)
 	}
 
 	// Load the input image
-	image = FreeImage_Load(fif, filename, 0);
+	image = FreeImage_Load(fif, filename.c_str(), 0);
 
 	if( image == NULL )
 	{

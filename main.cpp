@@ -40,7 +40,7 @@ const char *replace_name_list[] = {
 
 // Context stuff
 int ctx_project_modified = false;
-std::string ctx_project;
+std::filesystem::path ctx_project;
 std::vector<TimItem*> ctx_items;
 
 Fl_PNG_Image	*app_icon;
@@ -110,144 +110,6 @@ std::string StripFileName(const char *file)
 	if( i > 0 )
 		output.append(file, i);
 	
-	return output;
-}
-
-std::string MakePathAbsolute(const char* relpath, const char* base, 
-	int has_file = false)
-{
-	std::string output;
-	size_t i,n_parents;
-	size_t path_len;
-	const char *c_ptr;
-	
-	// First two characters must be periods for it to be a relative path
-	if( strncmp(relpath, "..", 2) )
-	{
-		// Return path as-is if absolute already
-		if( strncmp(base+1, ":\\", 2) )
-		{
-			output = relpath;
-			return output;
-		}
-	}
-	
-	// Count number of parents (strspn not reliable for this)
-	c_ptr = relpath;
-	n_parents = 0;
-	while( (c_ptr = strstr(c_ptr, "..")) )
-	{
-		n_parents++;
-		c_ptr += 2;
-	}
-	
-	if( has_file )
-		n_parents++;
-	
-	// No parent directories, return path as-is
-	if( n_parents < 1 )
-	{
-		// Relative path assumed to be file name, append relative path to base
-		output = base;
-		output += "\\";
-		output += relpath;
-		return output;
-	}
-	
-	// End of string
-	path_len = strlen(base)-1;
-	
-	// Trim off directory names based on number of parents of relative path
-	i = n_parents;
-	while( i > 0 )
-	{
-		if( base[path_len] == '\\' )
-			path_len--;
-		
-		while( (base[path_len] != '\\') && (path_len >= 0) )
-			path_len--;
-		
-		if( path_len < 0 )
-			break;
-		
-		i--;
-	}
-	
-	if( path_len < 0 )
-	{
-		output = relpath;
-		return output;
-	}
-	
-	output.append(base, path_len);
-	
-	// Now trim off the relative part of the path name
-	i = n_parents;
-	c_ptr = relpath;
-	while( i > 0 )
-	{
-		const char *c;
-		
-		if( ( c = strstr(c_ptr, "..") ) == nullptr )
-		{
-			break;
-		}
-		
-		c_ptr = c + 2;
-	}
-	
-	// Combine
-	output += c_ptr;
-	return output;
-}
-
-std::string MakePathRelative(const char* path, const char* base)
-{
-	int diff_begin;
-	std::string output;
-	
-	diff_begin = 0;
-	while( (path[diff_begin] != 0) && (base[diff_begin] != 0) )
-	{
-		// Check for beginning of difference
-		if( tolower(path[diff_begin]) != tolower(base[diff_begin]) )
-		{
-			if( diff_begin < 2 )
-			{
-				output = path;
-				return output;
-			}
-			
-			// Snap to slash character of parent directory
-			while( base[diff_begin] != '\\' )
-				diff_begin--;
-			
-			// Count directories from base path
-			for( int i=diff_begin; base[i]!=0; i++ )
-			{
-				if( base[i] == '\\' )
-				{
-					output += "..\\";
-				}
-			}
-			
-			output += (path+diff_begin+1);
-			
-			break;
-		}
-		
-		diff_begin++;
-	}
-	
-	// If file is local, simply trim off the file path
-	if( output.empty() )
-	{
-		const char *c = strrchr(path, '\\');
-		if( c == nullptr )
-			return output;
-		output = c+1;
-	}
-
 	return output;
 }
 
@@ -361,17 +223,14 @@ void NewProject()
 	
 }
 
-int LoadProject(const char *filename)
+int LoadProject(const std::filesystem::path &filename)
 {	
 	int i;
-	std::string base_path;
 	tinyxml2::XMLDocument doc;
 	tinyxml2::XMLElement *base,*o,*oo;
 	
-	base_path = StripFileName(filename);
-	
 	fl_message_title("Error loading project");
-	if( doc.LoadFile(filename) != tinyxml2::XML_SUCCESS ) {
+	if( doc.LoadFile(filename.c_str()) != tinyxml2::XML_SUCCESS ) {
 		fl_message("tinyxml2 error:\n%s", doc.ErrorStr());
 		return 1;
 	}
@@ -451,9 +310,20 @@ int LoadProject(const char *filename)
 				continue;
 			}
 			
-			item->file = MakePathAbsolute(item->file.c_str(), base_path.c_str());
+			std::filesystem::path abs_path;
+			if (item->file.is_relative()) {
+				abs_path = filename.parent_path();
+				abs_path /= item->file;
+			} else {
+				abs_path = item->file;
+			}
+
+			item->file = abs_path.lexically_normal();
+#ifdef DEBUG
+			printf("[DEBUG] LoadProject: item->file = %s\n", item->file.c_str());
+#endif
 			
-			ret = item->tim.LoadTim(item->file.c_str());
+			ret = item->tim.LoadTim(item->file);
 			if( ret != TimImage::ERR_OK ) {
 				
 				switch(ret) {
@@ -482,14 +352,6 @@ int LoadProject(const char *filename)
 				item->ParseXML(oo);
 			}
 			
-#ifdef DEBUG
-			std::string test;
-			test = MakePathRelative(item->src_file.c_str(), base_path.c_str());
-			printf("Relative path: %s\n", test.c_str());
-			test = MakePathAbsolute(test.c_str(), base_path.c_str(), true);
-			printf("Absolute path: %s\n", test.c_str());
-#endif /* DEBUG */
-
 			item->group = i;
 			RegisterTimItem(item);
 			
@@ -528,17 +390,13 @@ void SaveTims()
 	}
 }
 
-int SaveProject(const char *filename)
+int SaveProject(const std::filesystem::path &filename)
 {
-	
-	std::string project_base;
 	int i;
 	const Fl_Menu_Item *m;
 	
 	tinyxml2::XMLDocument doc;
 	tinyxml2::XMLElement *base,*o,*oo;
-	
-	project_base = StripFileName(filename);
 	
 	base = doc.NewElement("tim_project");
 	
@@ -566,7 +424,7 @@ int SaveProject(const char *filename)
 		{	
 			if( ctx_items[j]->group == i )
 			{
-				ctx_items[j]->OutputXML(&doc, o, project_base.c_str());
+				ctx_items[j]->OutputXML(&doc, o, filename.parent_path());
 			}
 		}
 		
@@ -580,7 +438,7 @@ int SaveProject(const char *filename)
 		i++;
 	}
 	
-	if( doc.SaveFile(filename) != tinyxml2::XML_SUCCESS ) {
+	if( doc.SaveFile(filename.c_str()) != tinyxml2::XML_SUCCESS ) {
 		fl_message_title("Save Error");
 		fl_message("%s", doc.ErrorStr());
 		return 1;
@@ -594,7 +452,8 @@ int SaveProject(const char *filename)
 	for( size_t i=0; i<ctx_items.size(); i++ ) {
 		
 		if( ctx_items[i]->tim.modified ) {
-			tim_list += ctx_items[i]->file + "\n";
+			tim_list += ctx_items[i]->file;
+			tim_list += "\n";
 			tims_modded = true;
 		}
 			
@@ -638,16 +497,14 @@ int SaveProjectDialog(int save_as = 0) {
 
 		ctx_project = chooser.filename();
 
-		size_t ext_pos = ctx_project.rfind("/");
-
-		if( ext_pos == std::string::npos ) {
-			ext_pos = ctx_project.rfind("\\");
-		}
-
-		ext_pos = ctx_project.find(".", ext_pos);
-
-		if( ext_pos == std::string::npos ) {
+		if (!ctx_project.has_extension()) {
+#ifdef DEBUG
+			printf("Missing Project Extension Before: %s\n", ctx_project.c_str());
+#endif
 			ctx_project += ".tpj";
+#ifdef DEBUG
+			printf("Missing Project Extension After: %s\n", ctx_project.c_str());
+#endif
 		}
 
 #ifdef DEBUG
@@ -669,7 +526,8 @@ int CheckSave(void) {
 	for( size_t i=0; i<ctx_items.size(); i++ ) {
 		
 		if( ctx_items[i]->tim.modified ) {
-			tim_list += ctx_items[i]->file + "\n";
+			tim_list += ctx_items[i]->file;
+			tim_list += "\n";
 			tims_modded = true;
 		}
 			

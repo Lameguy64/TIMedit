@@ -68,7 +68,7 @@ public:
 	ImportImage();
 	virtual ~ImportImage();
 	
-	int LoadSource(const char *filename);
+	int LoadSource(const std::filesystem::path &filename);
 
 	int Convert(TimImage *image, ImportParams *params);
 	

@@ -50,14 +50,14 @@ TimImage::~TimImage() {
 	
 }
 
-TimImage::TIM_ERR TimImage::LoadTim(const char *filename) {
+TimImage::TIM_ERR TimImage::LoadTim(const std::filesystem::path &filename) {
 	
 	TIM_HEADER	head;
 	TIM_BLOCK	block;
 	FILE *fp;
 	//int sz;
 	
-	fp = fopen( filename, "rb" );
+	fp = fopen(filename.c_str(), "rb");
 	
 	if( !fp )
 		return ERR_NOT_FOUND;
@@ -152,14 +152,14 @@ TimImage::TIM_ERR TimImage::LoadTim(const char *filename) {
 	
 }
 
-TimImage::TIM_ERR TimImage::SaveTim(const char *filename) {
+TimImage::TIM_ERR TimImage::SaveTim(const std::filesystem::path &filename) {
 	
 	TIM_HEADER	head;
 	TIM_BLOCK	block;
 	FILE *fp;
 	int len;
 	
-	fp = fopen(filename, "wb");
+	fp = fopen(filename.c_str(), "wb");
 	
 	if( !fp ) {
 		return ERR_CANT_WRITE;

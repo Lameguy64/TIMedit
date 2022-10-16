@@ -1,8 +1,6 @@
 #include <FL/Fl.H>
 #include "TimItem.h"
 
-std::string MakePathRelative(const char* path, const char* base);
-
 TimItem::TimItem()
 {	
 	ctrl		= NULL;
@@ -31,20 +29,18 @@ TimItem::~TimItem()
 }
 
 void TimItem::OutputXML(tinyxml2::XMLDocument *doc, 
-	tinyxml2::XMLElement *element, const char *base_dir)
+	tinyxml2::XMLElement *element, const std::filesystem::path &base_dir)
 {
 	tinyxml2::XMLElement *o,*oo,*base;
 	char temp[16];
-	std::string save_name;
 	
 	base = doc->NewElement("tim");
 	
-	save_name = MakePathRelative(file.c_str(), base_dir);
+	const std::filesystem::path save_name = file.lexically_relative(base_dir);
 	base->SetAttribute("file", save_name.c_str());
 	
 	if( imported )
 	{
-		save_name = MakePathRelative(src_file.c_str(), base_dir);
 		base->SetAttribute("source", save_name.c_str());
 		o = doc->NewElement("import_parameters");
 		

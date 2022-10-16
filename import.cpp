@@ -9,15 +9,14 @@
 #include "Fl_TimImage.h"
 	
 extern MainUI					*ui;
-extern std::string				ctx_project;
+extern std::filesystem::path ctx_project;
 extern std::vector<TimItem*>	ctx_items;
 
-std::string MakePathAbsolute(const char* relpath, const char* base, int has_file = false);
 void RegisterTimItem(TimItem* item, int refresh = 0);
 
 
 ImportUI		*import_ui;
-std::string		import_image;
+std::filesystem::path import_image;
 ImportParams	import_params;
 ImportImage		*importer;
 TimItem			*import_item;
@@ -153,7 +152,7 @@ static void SetControls(ImportParams* params)
 
 void cb_ImportOkayAlt(Fl_Return_Button* w, void* u);
 
-void do_import(const char* filename, ImportParams *params)
+void do_import(const std::filesystem::path &filename, ImportParams *params)
 {
 	fl_message_title("Error Importing");
 	
@@ -274,7 +273,7 @@ void cb_ImportImage(Fl_Menu_ *w, void *u)
 	}
 	
 	reimport_item = NULL;
-	do_import( import_image.c_str(), NULL );
+	do_import(import_image, NULL);
 }
 
 void cb_ReimportTim(Fl_Menu_* w, long u)
@@ -312,17 +311,18 @@ void cb_ReimportTim(Fl_Menu_* w, long u)
 	
 	fl_message_title( "Error Importing" );
 	
-	std::string abs_file;
+	std::filesystem::path abs_file;
 	
-	if( tim->src_file[1] == ':' )
+	if( tim->src_file.is_absolute() )
 	{
 		abs_file = tim->src_file;
 	}
 	else
 	{
-		abs_file = MakePathAbsolute(
-			tim->src_file.c_str(), ctx_project.c_str(), 1 );
+		abs_file = ctx_project.parent_path();
+		abs_file /= tim->src_file;
 	}
+	abs_file = abs_file.lexically_normal();
 	
 	if( !u )
 	{
@@ -631,9 +631,8 @@ void cb_ImportOkay(Fl_Return_Button *w, void *u)
 	
 	import_item->file = chooser.filename();
 	
-	if( import_item->file.find(".") == std::string::npos )
-	{
-		import_item->file.append(".tim");
+	if (!import_item->file.has_extension()) {
+		import_item->file += (".tim");
 	}
 	
 #ifdef DEBUG

@@ -1,6 +1,7 @@
 #ifndef TIMITEM_H
 #define TIMITEM_H
 
+#include <filesystem>
 #include <string>
 #include <tinyxml2.h>
 #include "Fl_TimImage.h"
@@ -14,12 +15,12 @@ public:
 	virtual ~TimItem();
 
 	void OutputXML(tinyxml2::XMLDocument *doc, tinyxml2::XMLElement *element, 
-		const char *base_dir);
+		const std::filesystem::path &base_dir);
 	
 	void ParseXML(tinyxml2::XMLElement *tim_element);
 	
-	std::string file;
-	std::string src_file;
+	std::filesystem::path file;
+	std::filesystem::path src_file;
 	
 	Fl_TimImage	*ctrl;
 	Fl_TimImage	*clut_ctrl;
