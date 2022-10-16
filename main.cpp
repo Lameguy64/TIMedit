@@ -56,12 +56,11 @@ TimItem* GetSelectedTimItem()
 {
 	Fl_TimImage *tim_ctl = (Fl_TimImage*)img_selected;
 	TimImage *tim_img = tim_ctl->GetImage();
-	TimItem *tim;
 	
 	if( !img_selected )
 		return NULL;
 	
-	size_t found = -1;
+	int found = -1;
 	for( size_t i=0; i<ctx_items.size(); i++ )
 	{
 		if( tim_img == &ctx_items[i]->tim )
