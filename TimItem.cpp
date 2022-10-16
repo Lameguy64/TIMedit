@@ -36,12 +36,11 @@ void TimItem::OutputXML(tinyxml2::XMLDocument *doc,
 	
 	base = doc->NewElement("tim");
 	
-	const std::filesystem::path save_name = file.lexically_relative(base_dir);
-	base->SetAttribute("file", save_name.c_str());
+	base->SetAttribute("file", file.lexically_relative(base_dir).c_str());
 	
 	if( imported )
 	{
-		base->SetAttribute("source", save_name.c_str());
+		base->SetAttribute("source", src_file.lexically_relative(base_dir).c_str());
 		o = doc->NewElement("import_parameters");
 		
 		oo = doc->NewElement("target_bpp");

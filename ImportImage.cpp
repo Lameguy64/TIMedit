@@ -27,13 +27,14 @@ ImportImage::~ImportImage()
 }
 
 int ImportImage::LoadSource(const std::filesystem::path &filename)
-{	
+{
+#ifdef DEBUG
+	printf("[DEBUG] ImportImage::LoadSource: %s\n", filename.c_str());
+#endif
 	// Check if file exists
 	if( access(filename.c_str(), F_OK) == -1 )
 	{
-#ifdef DEBUG
-		printf("ERROR: File not found.\n");
-#endif /* DEBUG */
+		fprintf(stderr, "[ERROR] File not found: %s\n", filename.c_str());
 		return 1;
 	}
 
@@ -46,9 +47,7 @@ int ImportImage::LoadSource(const std::filesystem::path &filename)
 
 		if( !FreeImage_FIFSupportsReading(fif) )
 		{
-#ifdef DEBUG
-			printf("ERROR: Unknown/unsupported image format.\n");
-#endif /* DEBUG */
+			fprintf(stderr, "[ERROR] Unknown/unsupported image format: %s\n", filename.c_str());
 			return 1;
 		}
 	}
@@ -58,17 +57,13 @@ int ImportImage::LoadSource(const std::filesystem::path &filename)
 
 	if( image == NULL )
 	{
-#ifdef DEBUG
-		printf("ERROR: Cannot load specified image file.\n");
-#endif /* DEBUG */
+		fprintf(stderr, "[ERROR] Cannot load specified image file: %s\n", filename.c_str());
 		return 1;
 	}
 
 	// Some checks to make sure that the image is really valid
 	if( !FreeImage_HasPixels(image) ) {
-#ifdef DEBUG
-		printf("ERROR: Source image has no pixel data... Somehow.\n");
-#endif /* DEBUG */
+		fprintf(stderr, "[ERROR] Source image has no pixel data... Somehow: %s\n", filename.c_str());
 		FreeImage_Unload(image);
 		image = NULL;
 		return 1;

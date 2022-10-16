@@ -338,7 +338,7 @@ void cb_ReimportTim(Fl_Menu_*, long u)
 		printf( "Attempt to import: %s\n", abs_file.c_str() );
 #endif /* DEBUG */
 
-		if( importer->LoadSource( abs_file.c_str() ) )
+		if (importer->LoadSource(abs_file))
 		{
 			fl_message("Source image not found or cannot be loaded.");
 			delete importer;
