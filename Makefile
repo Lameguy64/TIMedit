@@ -12,7 +12,7 @@ OFILES		= $(addprefix build/,$(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(IMAGES:.p
 
 LIBS		= -lfreeimage -ltinyxml2 -lfltk_images -lfltk
 
-CFLAGS := -std=c++17
+CFLAGS := -std=c++17 -pedantic -Wall -Wextra -Wno-cast-function-type
 
 ifeq "$(CONF)" "debug"
 CFLAGS		+= -g -DDEBUG

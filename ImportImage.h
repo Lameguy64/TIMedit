@@ -10,7 +10,7 @@
 
 typedef struct ImportParams
 {
-	int target_bpp;		// Target color depth
+	unsigned int target_bpp; // Target color depth
 	int dithering;		// Do dithering
 	int quant_mode;		// Palette quantization mode (0 - Simple, 1 - Xiaolin Wu, 2 - NeuQuant)
 	int color_stp;		// Set STP on non black pixels
@@ -19,7 +19,7 @@ typedef struct ImportParams
 	int transp_mode;
 	int alpha_thresh;	// Alpha transparency threshold (alpha < this = transparent)
 	int stp_thresh;		// Stp transparency threshold (alpha < this = stp enabled)
-	int colorkey;
+	unsigned int colorkey;
 	
 	int color_adjust;
 	float adj_red;
@@ -72,7 +72,7 @@ public:
 
 	int Convert(TimImage *image, ImportParams *params);
 	
-	int GetSourceDepth()
+	unsigned int GetSourceDepth()
 	{
 		return FreeImage_GetBPP(image);
 	}

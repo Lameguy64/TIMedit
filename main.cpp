@@ -113,7 +113,6 @@ std::string StripFileName(const char *file)
 }
 
 void RegisterTimItem(TimItem *item, int refresh = 0) {
-	
 	void cb_TimImage(Fl_TimImage *w, void *u);
 	
 	// Adds interactive UI widgets of TIM items
@@ -219,7 +218,6 @@ void NewProject()
 	ClearGroups();
 	
 	img_selected = NULL;
-	
 }
 
 int LoadProject(const std::filesystem::path &filename)
@@ -365,7 +363,6 @@ int LoadProject(const std::filesystem::path &filename)
 	SetVisibleGroup(0);
 	
 	return 0;
-	
 }
 
 void SaveTims()
@@ -395,7 +392,7 @@ int SaveProject(const std::filesystem::path &filename)
 	const Fl_Menu_Item *m;
 	
 	tinyxml2::XMLDocument doc;
-	tinyxml2::XMLElement *base,*o,*oo;
+	tinyxml2::XMLElement *base, *o;
 	
 	base = doc.NewElement("tim_project");
 	
@@ -470,11 +467,9 @@ int SaveProject(const std::filesystem::path &filename)
 	}
 	
 	return 0;
-	
 }
 
 int SaveProjectDialog(int save_as = 0) {
-	
 	if( ctx_items.size() == 0 ) {
 		fl_message_title("Empty Project");
 		fl_message("Cannot save an empty project.");
@@ -508,11 +503,9 @@ int SaveProjectDialog(int save_as = 0) {
 		printf("[DEBUG] SaveProjectDialog: %s\n", ctx_project.c_str());
 #endif /* DEBUG */
 	return SaveProject(ctx_project.c_str());
-	
 }
 
 int CheckSave(void) {
-	
 	int ret;
 	int tims_modded = false;
 	std::string tim_list;
@@ -544,20 +537,16 @@ int CheckSave(void) {
 	}
 	
 	return 0;
-	
 }
 
-void cb_NewProject(Fl_Menu_ *w, void *u) {
-	
+void cb_NewProject(Fl_Menu_*, void*) {
 	if( CheckSave() )
 		return;
 	
 	NewProject();
-	
 }
 
-void cb_OpenProject(Fl_Menu_ *w, void *u) {
-	
+void cb_OpenProject(Fl_Menu_*, void*) {
 	if( CheckSave() )
 		return;
 	
@@ -572,45 +561,35 @@ void cb_OpenProject(Fl_Menu_ *w, void *u) {
 		return;
 	
 	LoadProject(chooser.filename());
-	
 }
 
-void cb_SaveProject(Fl_Menu_ *w, long u) {
-
+void cb_SaveProject(Fl_Menu_*, long u) {
 	SaveProjectDialog(u);
-	
 }
 
 
-void cb_ImagePosition(Fl_Spinner *w, void *u) {
-	
+void cb_ImagePosition(Fl_Spinner*, void*) {
 	TimItem *item = (TimItem*)((Fl_TimImage*)img_selected)->user_data();
 	
 	item->ctrl->position( 
 		ui->vramArea->x()+(ui->imageXpos->value()*item->ctrl->GetZoom()), 
 		ui->vramArea->y()+(ui->imageYpos->value()*item->ctrl->GetZoom()));
-	
 }
 
-void cb_ClutPosition(Fl_Spinner *w, void *u) {
-	
+void cb_ClutPosition(Fl_Spinner*, void*) {
 	TimItem *item = (TimItem*)((Fl_TimImage*)img_selected)->user_data();
 	
 	item->clut_ctrl->position( 
 		ui->vramArea->x()+(ui->clutXpos->value()*item->ctrl->GetZoom()), 
 		ui->vramArea->y()+(ui->clutYpos->value()*item->ctrl->GetZoom()));	
-	
 }
 
-void cb_VramArea(Fl_VramArea *w, void *u) {
-	
+void cb_VramArea(Fl_VramArea*, void*) {
 	ui->timParams->deactivate();
 	ui->clutParams->deactivate();
-	
 }
 
 void cb_TimImage(Fl_TimImage *w, void *u) {
-
 	// Click callback of TIM image/CLUT UI elements
 	
 	Fl_Group *p;
@@ -717,11 +696,10 @@ void cb_TimImage(Fl_TimImage *w, void *u) {
 
 int last_zoom=1;
 
-void cb_ZoomValue(Fl_Spinner *w, void *u) {
-	
+void cb_ZoomValue(Fl_Spinner *w, void*) {
 	ui->vramArea->SetZoom(w->value());
 	
-	for( int i=0; i<ctx_items.size(); i++ ) {
+	for (size_t i=0; i<ctx_items.size(); i++) {
 		
 		ctx_items[i]->ctrl->SetZoom(w->value());
 		
@@ -751,7 +729,7 @@ void cb_ZoomValue(Fl_Spinner *w, void *u) {
 	
 }
 
-void cb_SnapOption(Fl_Check_Button *w, void *u) {
+void cb_SnapOption(Fl_Check_Button*, void*) {
 	
 	SetSnap(
 		ui->snapImages->value(),
@@ -760,7 +738,7 @@ void cb_SnapOption(Fl_Check_Button *w, void *u) {
 
 }
 
-void addItem_cb(Fl_Button *w, void *u) {
+void addItem_cb(Fl_Button*, void*) {
 	
 	Fl_Native_File_Chooser chooser;
 	
@@ -785,12 +763,10 @@ void addItem_cb(Fl_Button *w, void *u) {
 	
 	RegisterTimItem(item);
 	ctx_project_modified = true;
-	
 }
 
-void delItem_cb(Fl_Button *w, void *u) {
-	
-	for( int i=0; i<ctx_items.size(); i++ ) {
+void delItem_cb(Fl_Button*, void*) {
+	for (size_t i=0; i<ctx_items.size(); i++) {
 		
 		if( ctx_items[i]->ctrl == img_selected ) {
 			
@@ -812,11 +788,9 @@ void delItem_cb(Fl_Button *w, void *u) {
 		}
 		
 	}
-	
 }
 
-void cb_OverlapToggle(Fl_Check_Button *w, void *u) {
-	
+void cb_OverlapToggle(Fl_Check_Button *w, void*) {
 	for( size_t i=0; i<ctx_items.size(); i++ ) {
 		
 		ctx_items[i]->ctrl->SetOverlap(w->value());
@@ -828,50 +802,41 @@ void cb_OverlapToggle(Fl_Check_Button *w, void *u) {
 	}
 	
 	ui->vramArea->redraw();
-	
 }
 
-void cb_SetBufferRes(Fl_Menu_ *w, long u) {
-	
+void cb_SetBufferRes(Fl_Menu_*, long u) {
 	ui->vramArea->SetBufferRes(u);
 	
 	ctx_project_modified = true;
-	
 }
 
-void cb_SetBufferOrder(Fl_Menu_ *w, void *u) {
-	
+void cb_SetBufferOrder(Fl_Menu_*, void*) {
 	ui->vramArea->SetBufferOrder(ui->bufferOrderToggle->value());
 	
 	ctx_project_modified = true;
-	
 }
 
-void cb_ImgBlendMode(Fl_Round_Button *w, long u) {
-	
+void cb_ImgBlendMode(Fl_Round_Button*, long u) {
 	TimItem *item = (TimItem*)((Fl_TimImage*)img_selected)->user_data();
 	
 	item->tim.blendmode = u;
 	
 	item->ctrl->SetBlendMode(u);
-	
 }
 
-void cb_ToggleSemiTrans(Fl_Check_Button *w, void *u) {
-	
+void cb_ToggleSemiTrans(Fl_Check_Button *w, void*) {
 	for( size_t i=0; i<ctx_items.size(); i++ ) {
 		
 		ctx_items[i]->ctrl->SetBlend(w->value());
 		
 	}
-	
 }
 
-void cb_TimList(Fl_TimList *w, void *u)
-{	
-	if(( Fl::event() == FL_RELEASE ) 
+void cb_TimList(Fl_TimList *w, void*)
+{
+	if(( Fl::event() == FL_RELEASE )
 		&& ( Fl::event_button() == FL_LEFT_MOUSE ))
-	{	
+	{
 		TimItem *item;
 		int selected = -1;
 		
@@ -885,7 +850,7 @@ void cb_TimList(Fl_TimList *w, void *u)
 		}
 		
 		if( selected >= 0 )
-		{	
+		{
 			Fl_TimImage *image = (Fl_TimImage*)img_selected;
 			
 			img_selected = w->get_item(selected)->ctrl;
@@ -925,10 +890,9 @@ void cb_TimList(Fl_TimList *w, void *u)
 			}
 		}
 	}
-	
 }
 
-void cb_GroupChoice(Fl_Choice *w, void *u)
+void cb_GroupChoice(Fl_Choice *w, void*)
 {
 #ifdef DEBUG
 	printf("Active group has been switched to #%d.\n", w->value());
@@ -936,7 +900,7 @@ void cb_GroupChoice(Fl_Choice *w, void *u)
 	SetVisibleGroup(w->value());
 }
 
-void cb_AddGroup(Fl_Menu_ *w, void *u)
+void cb_AddGroup(Fl_Menu_*, void*)
 {
 	const char *group_name;
 	
@@ -950,10 +914,8 @@ void cb_AddGroup(Fl_Menu_ *w, void *u)
 	ui->groupList->add(group_name, 0, NULL);
 }
 
-void cb_RemoveGroup(Fl_Menu_ *w, void *u)
+void cb_RemoveGroup(Fl_Menu_*, void*)
 {
-	int i,del_group;
-	
 	if( ui->groupList->value() == 0 )
 	{
 		fl_message_title("Invalid Group");
@@ -961,9 +923,9 @@ void cb_RemoveGroup(Fl_Menu_ *w, void *u)
 		return;
 	}
 	
-	del_group = ui->groupList->value();
+	const int del_group = ui->groupList->value();
 	
-	for( i=0; i<ctx_items.size(); i++ )
+	for (size_t i=0; i<ctx_items.size(); i++)
 	{
 		if( ctx_items[i]->group == del_group )
 			ctx_items[i]->group = 0;
@@ -1011,7 +973,7 @@ void SelectClut(TimItem *item)
 	SetVisibleGroup(item->group);
 }
 
-void cb_deprecatePaths(Fl_Check_Button *w, void *u)
+void cb_deprecatePaths(Fl_Check_Button *w, void*)
 {
 	replace_name = replace_name_list[rand()%REPLACE_NAME_COUNT];
 	
@@ -1023,10 +985,8 @@ void cb_deprecatePaths(Fl_Check_Button *w, void *u)
 	}
 }
 
-void cb_CheckOverlap(Fl_Menu_ *w, void *u)
+void cb_CheckOverlap(Fl_Menu_*, void*)
 {
-	int i,j;
-	
 	int tx1,ty1;
 	int tx2,ty2;
 	
@@ -1037,7 +997,7 @@ void cb_CheckOverlap(Fl_Menu_ *w, void *u)
 	
 	fl_message_title("Overlap Check");
 	
-	for( i=0; i<ctx_items.size(); i++ )
+	for (size_t i=0; i<ctx_items.size(); i++)
 	{
 		// Test for image-image and image-CLUT overlaps
 		
@@ -1046,7 +1006,8 @@ void cb_CheckOverlap(Fl_Menu_ *w, void *u)
 		tx2 += tx1-1;
 		ty2 += ty1-1;
 		
-		for( j=0; j<ctx_items.size(); j++ )
+		size_t j;
+		for (j=0; j<ctx_items.size(); j++)
 		{
 			if( ctx_items[j]->group > 0 )
 			{
@@ -1175,27 +1136,26 @@ void cb_CheckOverlap(Fl_Menu_ *w, void *u)
 	fl_message("No overlapping images and CLUTs detected.");
 }
 
-void cb_MainWindow(Fl_Double_Window *w, void *u)
+void cb_MainWindow(Fl_Double_Window *w, void*)
 {
 	if( CheckSave() == 0 )
 		w->hide();
 }
 
-void cb_Exit(Fl_Menu_ *w, void *u)
+void cb_Exit(Fl_Menu_*, void*)
 {
 	if( CheckSave() == 0 )
 		ui->hide();
 }
 
-void cb_About(Fl_Menu_ *w, void *u) {
-	
+void cb_About(Fl_Menu_*, void*) {
 	fl_message_title("About TIMedit");
 	fl_message("TIMedit - PSX TIM conversion/editing tool\nBy Lameguy64");
 }
 
 extern char _binary_icons_timedit_png_start[];
 
-int main(int argc, char** argv)
+int main(const int, const char**)
 {
 	// For path name 'deprecation'
 	{
@@ -1209,7 +1169,7 @@ int main(int argc, char** argv)
 	
 	ui = new MainUI;
 
-	app_icon = new Fl_PNG_Image( NULL, 
+	app_icon = new Fl_PNG_Image( NULL,
 		(unsigned char*)_binary_icons_timedit_png_start,
 		400);
 		
@@ -1224,12 +1184,12 @@ int main(int argc, char** argv)
 	delete ui;
 	delete app_icon;
 	
-	for( int i=0; i<ctx_items.size(); i++ ) {
+	for (size_t i=0; i<ctx_items.size(); i++) {
 		delete ctx_items[i];
 	}
 	ctx_items.clear();
 	
 	FreeImage_DeInitialise();
 	
-	return ret;	
+	return ret;
 }

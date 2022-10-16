@@ -42,7 +42,7 @@ static void update_edit()
 	palette_ui->colorBox->redraw();
 }
 
-void cb_ClutOkay(Fl_Return_Button *w, void *u) {
+void cb_ClutOkay(Fl_Return_Button*, void*) {
 	
 	TimImage *edit = ((Fl_TimImage*)img_selected)->GetImage();
 	
@@ -55,20 +55,20 @@ void cb_ClutOkay(Fl_Return_Button *w, void *u) {
 	
 }
 
-void cb_ClutCancel(Fl_Button *w, void *u) {
+void cb_ClutCancel(Fl_Button*, void*) {
 	
 	palette_ui->hide();
 	
 }
 
-void cb_ClutPickMode(Fl_Button *w, void *u)
+void cb_ClutPickMode(Fl_Button *w, void*)
 {
 	
 	img_prev->PickMode(w->value());
 	
 }
 
-void cb_ClutRevert(Fl_Button *w, void *u)
+void cb_ClutRevert(Fl_Button*, void*)
 {	
 	TimImage *edit = ((Fl_TimImage*)img_selected)->GetImage();
 	
@@ -84,7 +84,7 @@ void cb_ClutRevert(Fl_Button *w, void *u)
 	palette_ui->preview->redraw();
 }
 
-void cb_ClutSliderChange(Fl_Value_Slider *w, void *u)
+void cb_ClutSliderChange(Fl_Value_Slider*, void*)
 {
 	int i = palette_ui->palette->selected();
 	
@@ -105,7 +105,7 @@ void cb_ClutSliderChange(Fl_Value_Slider *w, void *u)
 	img_prev->redraw();
 }
 
-void cb_ClutSlotValue(Fl_Spinner *w, void *u)
+void cb_ClutSlotValue(Fl_Spinner *w, void*)
 {
 	int i = w->value();
 	palette_ui->clutIndex->value(i);
@@ -116,7 +116,7 @@ void cb_ClutSlotValue(Fl_Spinner *w, void *u)
 	update_edit();
 }
 
-void cb_ClutZoom(Fl_Spinner *w, void *u)
+void cb_ClutZoom(Fl_Spinner *w, void*)
 {
 	int z = w->value();
 	
@@ -126,7 +126,7 @@ void cb_ClutZoom(Fl_Spinner *w, void *u)
 	palette_ui->preview->redraw();
 }
 
-void cb_ClutNewSlot(Fl_Button *w, void *u)
+void cb_ClutNewSlot(Fl_Button*, void*)
 {
 	int i = edit_image->AddClutSlot(1);
 	
@@ -137,7 +137,7 @@ void cb_ClutNewSlot(Fl_Button *w, void *u)
 	img_prev->redraw();
 }
 
-void cb_ClutDeleteSlot(Fl_Button *w, void *u)
+void cb_ClutDeleteSlot(Fl_Button*, void*)
 {
 	if( palette_ui->clutIndex->value() < 1 )
 	{
@@ -166,7 +166,7 @@ void cb_ClutDeleteSlot(Fl_Button *w, void *u)
 	update_edit();
 }
 
-void cb_ClutPrevDrawMode(Fl_Menu_ *w, long u)
+void cb_ClutPrevDrawMode(Fl_Menu_*, long u)
 {
 	if( u < 0 )
 	{
@@ -178,7 +178,7 @@ void cb_ClutPrevDrawMode(Fl_Menu_ *w, long u)
 	img_prev->SetBlendMode(u);
 }
 
-void cb_ClutStpToggle(Fl_Check_Button *w, void *u)
+void cb_ClutStpToggle(Fl_Check_Button*, void*)
 {
 	int i = palette_ui->palette->selected();
 	
@@ -192,7 +192,7 @@ void cb_ClutStpToggle(Fl_Check_Button *w, void *u)
 	img_prev->redraw();
 }
 
-void cb_PaletteClick(Fl_ClutPalette *w, void *u)
+void cb_PaletteClick(Fl_ClutPalette *w, void*)
 {
 	TIM_PIX_16 col = edit_image->ClutPixel(w->selected(), w->GetEditClut());
 	int i = palette_ui->palette->selected();
@@ -208,7 +208,7 @@ void cb_PaletteClick(Fl_ClutPalette *w, void *u)
 	update_edit();
 }
 
-void cb_ClutPreview(Fl_TimImage *w, void *u)
+void cb_ClutPreview(Fl_TimImage*, void*)
 {
 	if( palette_ui->pickToggle->value() )
 	{
@@ -218,7 +218,7 @@ void cb_ClutPreview(Fl_TimImage *w, void *u)
 	}
 }
 
-void cb_EditClut(Fl_Menu_ *w, void *u)
+void cb_EditClut(Fl_Menu_*, void*)
 {	
 	if( !img_selected )
 	{

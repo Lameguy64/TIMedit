@@ -22,7 +22,7 @@ TimItem* GetSelectedTimItem();
 void SetVisibleGroup(int group);
 
 
-void cb_MoveTimOkay(Fl_Return_Button *w, void *u)
+void cb_MoveTimOkay(Fl_Return_Button*, void*)
 {
 	TimItem *tim;
 	
@@ -37,12 +37,12 @@ void cb_MoveTimOkay(Fl_Return_Button *w, void *u)
 	dialog->hide();
 }
 
-void cb_MoveTimCancel(Fl_Button *w, void *u)
+void cb_MoveTimCancel(Fl_Button*, void*)
 {
 	dialog->hide();
 }
 
-void cb_MoveTimToGroup(Fl_Menu_ *w, void *u)
+void cb_MoveTimToGroup(Fl_Menu_*, void*)
 {
 	if( !img_selected )
 	{

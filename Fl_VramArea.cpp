@@ -63,8 +63,6 @@ void Fl_VramArea::draw() {
 	/*if( _bare )
 		return;*/
 	
-	int xx,yy;
-	
 	fl_draw_box( FL_BORDER_BOX, x(), y(), w(), h(), color() );
 	fl_draw_box( FL_BORDER_FRAME, x(), y(), w(), h(), FL_BLACK );
 	

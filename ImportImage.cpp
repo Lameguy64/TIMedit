@@ -498,7 +498,7 @@ TIM_PIX_16 ImportImage::ConvertPixel(BYTE *pix, int has_alpha, ImportParams *par
 		 3, -1,  2, -2
 	};
 	
-	int i,r,g,b;
+	int r,g,b;
 	TIM_PIX_16 pixel;
 	
 	r = pix[2];
@@ -920,7 +920,6 @@ void ImportImage::ProcessTransparency(TIM_PIX_16 *pix, int alpha, ImportParams *
 
 RGBQUAD ImportImage::GetRGBcolor(int x, int y)
 {
-	BYTE pix;
 	RGBQUAD pix_rgb;
 	
 	int h = FreeImage_GetHeight(image)-1;
