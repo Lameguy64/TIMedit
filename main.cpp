@@ -499,20 +499,15 @@ int SaveProjectDialog(int save_as = 0) {
 
 		if (!ctx_project.has_extension()) {
 #ifdef DEBUG
-			printf("Missing Project Extension Before: %s\n", ctx_project.c_str());
-#endif
+			printf("[DEBUG] SaveProjectDialog: adding .tpj extension: %s\n", ctx_project.c_str());
+#endif /* DEBUG */
 			ctx_project += ".tpj";
-#ifdef DEBUG
-			printf("Missing Project Extension After: %s\n", ctx_project.c_str());
-#endif
 		}
+	}
 
 #ifdef DEBUG
-		printf("Save name: %s\n", ctx_project.c_str());
+		printf("[DEBUG] SaveProjectDialog: %s\n", ctx_project.c_str());
 #endif /* DEBUG */
-		
-	}
-	
 	return SaveProject(ctx_project.c_str());
 	
 }
