@@ -1,5 +1,5 @@
-#include <Fl/Fl.H>
-#include <Fl/fl_draw.H>
+#include <FL/Fl.H>
+#include <FL/fl_draw.H>
 #include "Fl_TimImage.h"
 #include <vector>
 #include "TimItem.h"

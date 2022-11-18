@@ -3,7 +3,7 @@
 #ifndef FL_CLUTPALETTE_H
 #define FL_CLUTPALETTE_H
 
-#include <Fl/Fl_Widget.H>
+#include <FL/Fl_Widget.H>
 #include "TimImage.h"
 
 class Fl_ClutPalette : public Fl_Widget {
