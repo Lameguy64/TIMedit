@@ -1,6 +1,6 @@
-#include <Fl/fl_draw.H>
-#include <Fl/Fl_Widget.H>
-#include <Fl/Enumerations.H>
+#include <FL/fl_draw.H>
+#include <FL/Fl_Widget.H>
+#include <FL/Enumerations.H>
 #include "Fl_TimList.h"
 
 #define HEADER_FONTFACE FL_HELVETICA_BOLD

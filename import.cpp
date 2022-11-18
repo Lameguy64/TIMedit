@@ -1,7 +1,7 @@
 #include <string>
-#include <Fl/Fl_Color_Chooser.H>
-#include <Fl/Fl_Native_File_Chooser.H>
-#include <Fl/fl_message.H>
+#include <FL/Fl_Color_Chooser.H>
+#include <FL/Fl_Native_File_Chooser.H>
+#include <FL/fl_message.H>
 #include <FreeImage.h>
 #include "mainui.h"
 #include "importui.h"
