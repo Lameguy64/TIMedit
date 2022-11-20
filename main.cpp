@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <stdio.h>
 #include <sys/time.h>
 #include <vector>
@@ -1353,7 +1354,10 @@ int main(int argc, char** argv)
 		
 		gettimeofday(&t, nullptr);
 		srand(t.tv_sec);
-		user_name = getenv("USERNAME");
+		char* user_name_cstr = getenv("USERNAME");
+		if (user_name_cstr != NULL) {
+			user_name = user_name_cstr;
+		}
 	}
 	
 	FreeImage_Initialise(false);
