@@ -10,7 +10,7 @@ AFILES		= $(notdir $(wildcard *.s))
 IMAGES		= timedit.png
 OFILES		= $(addprefix build/,$(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(IMAGES:.png=.o))
 
-#LIBS		= -lfreeimage -ltinyxml2 -lfltk_images -lfltk_png -lfltk_z -lfltk
+# Libraries common to all platforms
 LIBS		= -ltinyxml2 -lfltk_images -lfltk
 
 ifeq "$(CONF)" "debug"
