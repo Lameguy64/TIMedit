@@ -788,7 +788,7 @@ void cb_TimImage(Fl_TimImage *w, void *u) {
 		
 	}
 	
-	if( ( Fl::event() == FL_PUSH ) || ((long)u) ) {
+	if( ( Fl::event() == FL_PUSH ) || u) {
 		
 		int tw,th;
 
