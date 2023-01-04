@@ -1,7 +1,7 @@
 //Created on September 27, 2019, 10:26 AM
 
-#include <Fl/Fl.H>
-#include <Fl/fl_draw.H>
+#include <FL/Fl.H>
+#include <FL/fl_draw.H>
 #include "Fl_ClutPalette.h"
 
 Fl_ClutPalette::Fl_ClutPalette(int X, int Y, int W, int H, const char *L)

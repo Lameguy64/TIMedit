@@ -16,7 +16,7 @@ public:
 	void OutputXML(tinyxml2::XMLDocument *doc, tinyxml2::XMLElement *element, 
 		const char *base_dir);
 	
-	void ParseXML(tinyxml2::XMLElement *tim_element);
+	void ParseXML(const tinyxml2::XMLElement *tim_element);
 	
 	std::string file;
 	std::string src_file;

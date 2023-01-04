@@ -1,13 +1,14 @@
+#include <cstddef>
 #include <stdio.h>
 #include <sys/time.h>
 #include <vector>
 
-#include <Fl/Fl.H>
-#include <Fl/Fl_Box.H>
-#include <Fl/Fl_Native_File_Chooser.H>
-#include <Fl/Fl_PNG_Image.H>
-#include <Fl/fl_message.H>
-#include <Fl/fl_draw.H>
+#include <FL/Fl.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Native_File_Chooser.H>
+#include <FL/Fl_PNG_Image.H>
+#include <FL/fl_message.H>
+#include <FL/fl_draw.H>
 #include <tinyxml2.h>
 #include <FreeImage.h>
 
@@ -242,7 +243,7 @@ std::string MakePathRelative(const char* path, const char* base)
 	// If file is local, simply trim off the file path
 	if( output.empty() )
 	{
-		char *c = strrchr(path, '\\');
+		const char *c = strrchr(path, '\\');
 		if( c == nullptr )
 			return output;
 		output = c+1;
@@ -366,7 +367,8 @@ int LoadProject(const char *filename)
 	int i;
 	std::string base_path;
 	tinyxml2::XMLDocument doc;
-	tinyxml2::XMLElement *base,*o,*oo;
+	tinyxml2::XMLElement *base,*o;
+	const tinyxml2::XMLElement *oo;
 	
 	base_path = StripFileName(filename);
 	
@@ -786,7 +788,7 @@ void cb_TimImage(Fl_TimImage *w, void *u) {
 		
 	}
 	
-	if( ( Fl::event() == FL_PUSH ) || ((long)u) ) {
+	if( ( Fl::event() == FL_PUSH ) || u) {
 		
 		int tw,th;
 
@@ -1341,7 +1343,7 @@ void cb_About(Fl_Menu_ *w, void *u) {
 	fl_message("TIMedit - PSX TIM conversion/editing tool\nBy Lameguy64");
 }
 
-extern char binary_icons_timedit_png_start[];
+extern char _binary_icons_timedit_png_start[];
 //extern unsigned int _binary_icons_timedit_png_size;
 
 int main(int argc, char** argv)
@@ -1352,7 +1354,10 @@ int main(int argc, char** argv)
 		
 		gettimeofday(&t, nullptr);
 		srand(t.tv_sec);
-		user_name = getenv("USERNAME");
+		char* user_name_cstr = getenv("USERNAME");
+		if (user_name_cstr != NULL) {
+			user_name = user_name_cstr;
+		}
 	}
 	
 	FreeImage_Initialise(false);
@@ -1360,7 +1365,7 @@ int main(int argc, char** argv)
 	ui = new MainUI;
 
 	app_icon = new Fl_PNG_Image( NULL, 
-		(unsigned char*)binary_icons_timedit_png_start, 
+		(unsigned char*)_binary_icons_timedit_png_start, 
 		400);
 		
 	ui->icon( app_icon );
