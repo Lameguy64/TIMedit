@@ -11,7 +11,7 @@ IMAGES		= timedit.png
 OFILES		= $(addprefix build/,$(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(IMAGES:.png=.o))
 
 #LIBS		= -lfreeimage -ltinyxml2 -lfltk_images -lfltk_png -lfltk_z -lfltk
-LIBS		= -lfreeimage -ltinyxml2 -lfltk_images -lfltk
+LIBS		= -ltinyxml2 -lfltk_images -lfltk
 
 ifeq "$(CONF)" "debug"
 CFLAGS		= -g
@@ -30,10 +30,14 @@ endif
 WINRES		= $(addprefix build/,$(RCFILE:.rc=.res))
 
 ifeq "$(OS)" "Windows_NT"
-LIBS		+= -lcomctl32 -lcomdlg32 -lgdi32 -lole32 -luuid
+LIBS		+= -lFreeImage -lcomctl32 -lcomdlg32 -lgdi32 -lole32 -luuid
 LIBDIRS		= -LC:\fltk-1.3.4-1\lib -LC:\tinyxml2 -LC:\freeimage
 INCLUDE		= -IC:\fltk-1.3.4-1 -IC:\tinyxml2 -IC:\freeimage
 CFLAGS		+= -DWIN32
+else
+# This library is capitalized differently on Windows and Linux
+# TODO: A check for mingw not running on Windows is needed here for cross-compilation to Windows to work
+LIBS		+= -lfreeimage
 endif
 
 CC		= gcc
