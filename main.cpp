@@ -1341,7 +1341,7 @@ void cb_About(Fl_Menu_ *w, void *u) {
 	fl_message("TIMedit - PSX TIM conversion/editing tool\nBy Lameguy64");
 }
 
-extern char binary_icons_timedit_png_start[];
+extern char png_timedit[];
 //extern unsigned int _binary_icons_timedit_png_size;
 
 int main(int argc, char** argv)
@@ -1360,7 +1360,7 @@ int main(int argc, char** argv)
 	ui = new MainUI;
 
 	app_icon = new Fl_PNG_Image( NULL, 
-		(unsigned char*)binary_icons_timedit_png_start, 
+		(unsigned char*)png_timedit, 
 		400);
 		
 	ui->icon( app_icon );
