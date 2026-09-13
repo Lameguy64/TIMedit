@@ -1,8 +1,8 @@
 #include <stdio.h>
 
-#include <Fl/Fl_Browser.H>
-#include <Fl/Fl_Return_Button.H>
-#include <Fl/fl_message.H>
+#include <FL/Fl_Browser.H>
+#include <FL/Fl_Return_Button.H>
+#include <FL/fl_message.H>
 
 #include "mainui.h"
 

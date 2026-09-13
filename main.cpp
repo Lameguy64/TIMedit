@@ -2,12 +2,13 @@
 #include <sys/time.h>
 #include <vector>
 
-#include <Fl/Fl.H>
-#include <Fl/Fl_Box.H>
-#include <Fl/Fl_Native_File_Chooser.H>
-#include <Fl/Fl_PNG_Image.H>
-#include <Fl/fl_message.H>
-#include <Fl/fl_draw.H>
+#include <FL/Fl.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Native_File_Chooser.H>
+#include <FL/Fl_PNG_Image.H>
+#include <FL/fl_message.H>
+#include <FL/fl_draw.H>
+#include <FL/filename.H>
 #include <tinyxml2.h>
 #include <FreeImage.h>
 
@@ -102,153 +103,64 @@ void SetVisibleGroup(int group)
 
 std::string StripFileName(const char *file)
 {
-	std::string output;
-	int i;
-	
-	for( i=strlen(file)-1; ((file[i]!='\\')&&(i>0)); i-- );
-	
-	if( i > 0 )
-		output.append(file, i);
-	
-	return output;
+	size_t length = fl_filename_name(file)-file;
+	if( length > 1 )
+	{
+#ifdef WIN32
+		if( length != 3 || file[1] != ':' )
+#endif
+			length--;
+	}
+	return std::string(file, length);
 }
 
-std::string MakePathAbsolute(const char* relpath, const char* base, 
-	int has_file = false)
+std::string MakePathAbsolute(const char* relpath, const char* base)
 {
-	std::string output;
-	size_t i,n_parents;
-	size_t path_len;
-	const char *c_ptr;
-	
-	// First two characters must be periods for it to be a relative path
-	if( strncmp(relpath, "..", 2) )
+	if( !*relpath )
+		return std::string();
+
+	std::vector<char> output(strlen(relpath)+strlen(base)+FL_PATH_MAX);
+	std::vector<char> directory(strlen(base)+FL_PATH_MAX);
+	fl_filename_absolute(directory.data(), directory.size(), *base ? base : ".");
+
+#if FL_API_VERSION >= 10400
+	fl_filename_absolute(output.data(), output.size(), relpath, directory.data());
+#else
+	// FLTK 1.3 has no absolute-path overload accepting a base directory.
+	if( fl_filename_absolute(output.data(), output.size(), relpath) )
 	{
-		// Return path as-is if absolute already
-		if( strncmp(base+1, ":\\", 2) )
-		{
-			output = relpath;
-			return output;
-		}
+		std::string path = directory.data();
+		if( *fl_filename_name(path.c_str()) )
+			path += "/";
+		path += relpath;
+		fl_filename_absolute(output.data(), output.size(), path.c_str());
 	}
+#endif
 	
-	// Count number of parents (strspn not reliable for this)
-	c_ptr = relpath;
-	n_parents = 0;
-	while( (c_ptr = strstr(c_ptr, "..")) )
-	{
-		n_parents++;
-		c_ptr += 2;
-	}
-	
-	if( has_file )
-		n_parents++;
-	
-	// No parent directories, return path as-is
-	if( n_parents < 1 )
-	{
-		// Relative path assumed to be file name, append relative path to base
-		output = base;
-		output += "\\";
-		output += relpath;
-		return output;
-	}
-	
-	// End of string
-	path_len = strlen(base)-1;
-	
-	// Trim off directory names based on number of parents of relative path
-	i = n_parents;
-	while( i > 0 )
-	{
-		if( base[path_len] == '\\' )
-			path_len--;
-		
-		while( (base[path_len] != '\\') && (path_len >= 0) )
-			path_len--;
-		
-		if( path_len < 0 )
-			break;
-		
-		i--;
-	}
-	
-	if( path_len < 0 )
-	{
-		output = relpath;
-		return output;
-	}
-	
-	output.append(base, path_len);
-	
-	// Now trim off the relative part of the path name
-	i = n_parents;
-	c_ptr = relpath;
-	while( i > 0 )
-	{
-		const char *c;
-		
-		if( ( c = strstr(c_ptr, "..") ) == nullptr )
-		{
-			break;
-		}
-		
-		c_ptr = c + 2;
-	}
-	
-	// Combine
-	output += c_ptr;
-	return output;
+	return output.data();
 }
 
 std::string MakePathRelative(const char* path, const char* base)
 {
-	int diff_begin;
-	std::string output;
+	if( !*path )
+		return std::string();
 	
-	diff_begin = 0;
-	while( (path[diff_begin] != 0) && (base[diff_begin] != 0) )
+	std::vector<char> absolute_base(strlen(base)+FL_PATH_MAX);
+	fl_filename_absolute(absolute_base.data(), absolute_base.size(), *base ? base : ".");
+	std::string directory = absolute_base.data();
+	while( directory.size() > 1 && !*fl_filename_name(directory.c_str()) )
 	{
-		// Check for beginning of difference
-		if( tolower(path[diff_begin]) != tolower(base[diff_begin]) )
-		{
-			if( diff_begin < 2 )
-			{
-				output = path;
-				return output;
-			}
-			
-			// Snap to slash character of parent directory
-			while( base[diff_begin] != '\\' )
-				diff_begin--;
-			
-			// Count directories from base path
-			for( int i=diff_begin; base[i]!=0; i++ )
-			{
-				if( base[i] == '\\' )
-				{
-					output += "..\\";
-				}
-			}
-			
-			output += (path+diff_begin+1);
-			
+#ifdef WIN32
+		if( directory.size() == 3 && directory[1] == ':' )
 			break;
-		}
-		
-		diff_begin++;
+#endif
+		directory.resize(directory.size()-1);
 	}
+	std::string filename = MakePathAbsolute(path, directory.c_str());
+	std::vector<char> output(filename.size()+directory.size()*3+FL_PATH_MAX);
+	fl_filename_relative(output.data(), output.size(), filename.c_str(), directory.c_str());
 	
-	// If file is local, simply trim off the file path
-	if( output.empty() )
-	{
-		char *c = strrchr(path, '\\');
-		if( c == nullptr )
-			return output;
-		output = c+1;
-	}
-
-	return output;
+	return output.data();
 }
 
 void RegisterTimItem(TimItem *item, int refresh = 0) {
@@ -262,26 +174,7 @@ void RegisterTimItem(TimItem *item, int refresh = 0) {
 	
 	
 	// Strip path name for tooltip
-	item_name = strrchr(item->file.c_str(), '/');
-	if( !item_name ) {
-
-		item_name = strrchr(item->file.c_str(), '\\');
-
-		if( !item_name ) {
-			
-			item_name = item->file.c_str();
-			
-		} else {
-			
-			item_name++;
-			
-		}
-
-	} else {
-		
-		item_name++;
-		
-	}
+	item_name = fl_filename_name(item->file.c_str());
 	
 	
 	if( refresh )
@@ -486,7 +379,7 @@ int LoadProject(const char *filename)
 			std::string test;
 			test = MakePathRelative(item->src_file.c_str(), base_path.c_str());
 			printf("Relative path: %s\n", test.c_str());
-			test = MakePathAbsolute(test.c_str(), base_path.c_str(), true);
+			test = MakePathAbsolute(test.c_str(), base_path.c_str());
 			printf("Absolute path: %s\n", test.c_str());
 #endif /* DEBUG */
 
@@ -638,15 +531,7 @@ int SaveProjectDialog(int save_as = 0) {
 
 		ctx_project = chooser.filename();
 
-		size_t ext_pos = ctx_project.rfind("/");
-
-		if( ext_pos == std::string::npos ) {
-			ext_pos = ctx_project.rfind("\\");
-		}
-
-		ext_pos = ctx_project.find(".", ext_pos);
-
-		if( ext_pos == std::string::npos ) {
+		if( !*fl_filename_ext(ctx_project.c_str()) ) {
 			ctx_project += ".tpj";
 		}
 
@@ -1341,8 +1226,8 @@ void cb_About(Fl_Menu_ *w, void *u) {
 	fl_message("TIMedit - PSX TIM conversion/editing tool\nBy Lameguy64");
 }
 
-extern char binary_icons_timedit_png_start[];
-//extern unsigned int _binary_icons_timedit_png_size;
+extern unsigned char binary_icons_timedit_png_start[];
+extern unsigned int binary_icons_timedit_png_size;
 
 int main(int argc, char** argv)
 {
@@ -1352,7 +1237,10 @@ int main(int argc, char** argv)
 		
 		gettimeofday(&t, nullptr);
 		srand(t.tv_sec);
-		user_name = getenv("USERNAME");
+		const char *name = getenv("USERNAME");
+		if( !name || !*name )
+			name = getenv("USER");
+		user_name = name ? name : "";
 	}
 	
 	FreeImage_Initialise(false);
@@ -1361,7 +1249,7 @@ int main(int argc, char** argv)
 
 	app_icon = new Fl_PNG_Image( NULL, 
 		(unsigned char*)binary_icons_timedit_png_start, 
-		400);
+		binary_icons_timedit_png_size);
 		
 	ui->icon( app_icon );
 	ui->label( "TIMedit " VERSION );

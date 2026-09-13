@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <unistd.h>
-#include <malloc.h>
+#ifdef __APPLE__
+  #include <stdlib.h>
+#else
+  #include <malloc.h>
+#endif
 #include <string.h>
 #include "ImportImage.h"
 #include "TimImage.h"

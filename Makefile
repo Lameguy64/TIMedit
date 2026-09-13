@@ -1,60 +1,98 @@
-TARGET		= timedit
+TARGET		= timedit$(EXEEXT)
 RCFILE		= timedit.rc
-INSTALL		= /usr/bin
+PREFIX		?= /usr/local
+bindir		?= $(PREFIX)/bin
+DESTDIR		?=
+CONF		?= release
+FLTK_CONFIG	?= fltk-config
+PKG_CONFIG	?= pkg-config
+WINDRES		?= windres
+PYTHON		?= python3
+
+ifndef PLATFORM
+ifeq "$(OS)" "Windows_NT"
+PLATFORM	= Windows
+else
+PLATFORM	:= $(shell uname -s)
+endif
+endif
+
+BUILDDIR	= build/$(PLATFORM)/$(CONF)
 
 CFILES		= $(notdir $(wildcard *.c))
 CPPFILES	= $(notdir $(wildcard *.cpp))
 CXXFILES	= $(notdir $(wildcard *.cxx))
-AFILES		= $(notdir $(wildcard *.s))
 
 IMAGES		= timedit.png
-OFILES		= $(addprefix build/,$(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(IMAGES:.png=.o))
+OFILES		= $(addprefix $(BUILDDIR)/,$(CFILES:.c=.o) $(CPPFILES:.cpp=.o) $(CXXFILES:.cxx=.o) $(IMAGES:.png=.o))
 
-LIBS		= -lfreeimage -ltinyxml2 -lfltk_images -lfltk_png -lfltk_z -lfltk
+FLTK_CXXFLAGS	?= $(shell $(FLTK_CONFIG) --cxxflags)
+FLTK_LIBS	?= $(shell $(FLTK_CONFIG) --use-images --ldflags)
+FREEIMAGE_CFLAGS	?= $(shell $(PKG_CONFIG) --cflags freeimage 2>/dev/null)
+FREEIMAGE_LIBS	?= $(shell $(PKG_CONFIG) --libs freeimage 2>/dev/null || echo -lfreeimage)
+TINYXML2_CFLAGS	?= $(shell $(PKG_CONFIG) --cflags tinyxml2 2>/dev/null)
+TINYXML2_LIBS	?= $(shell $(PKG_CONFIG) --libs tinyxml2 2>/dev/null || echo -ltinyxml2)
+FLTK_CXXFLAGS	:= $(FLTK_CXXFLAGS)
+INCLUDE		:= $(FREEIMAGE_CFLAGS) $(TINYXML2_CFLAGS)
+LIBS		:= $(FREEIMAGE_LIBS) $(TINYXML2_LIBS) $(FLTK_LIBS)
 
 ifeq "$(CONF)" "debug"
-CFLAGS		= -g
-CXXFLAGS	= $(CFLAGS)
-AFLAGS		=
+BUILD_CFLAGS	= -g -O0
+BUILD_CPPFLAGS	= -DDEBUG
 else
-CFLAGS		= -mwindows -O2
-CXXFLAGS	= $(CFLAGS)
-AFLAGS		=
+BUILD_CFLAGS	= -O2
 endif
 
-WINRES		= $(addprefix build/,$(RCFILE:.rc=.res))
-
-ifeq "$(OS)" "Windows_NT"
-LIBS		+= -lcomctl32 -lcomdlg32 -lgdi32 -lole32 -luuid
-LIBDIRS		= -LC:\fltk-1.3.4-1\lib -LC:\tinyxml2 -LC:\freeimage
-INCLUDE		= -IC:\fltk-1.3.4-1 -IC:\tinyxml2 -IC:\freeimage
-CFLAGS		+= -DWIN32
+ifeq "$(PLATFORM)" "Windows"
+EXEEXT		= .exe
+WINRES		= $(addprefix $(BUILDDIR)/,$(RCFILE:.rc=.res))
+BUILD_CPPFLAGS	+= -DWIN32
+ifneq "$(CONF)" "debug"
+BUILD_LDFLAGS	= -mwindows
+endif
 endif
 
-CC		= gcc
-CXX		= g++
-AS		= as
+ifeq "$(origin CXX)" "default"
+CXX		= c++
+endif
 
-all: $(OFILES) $(WINRES)
-	$(CXX) $(CXXFLAGS) $(OFILES) $(LIBDIRS) $(LIBS) $(WINRES) -o $(TARGET)
+.PHONY: all clean install
+.SECONDARY: $(addprefix $(BUILDDIR)/,$(IMAGES:.png=.cpp))
+
+all: $(BUILDDIR)/$(TARGET)
+	@cmp -s "$<" "$(TARGET)" || cp -p "$<" "$(TARGET)"
+
+$(BUILDDIR)/$(TARGET): $(OFILES) $(WINRES)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(BUILD_LDFLAGS) $(OFILES) $(WINRES) $(LIBS) $(LDLIBS) -o "$@"
 
 clean:
-	rm -Rf build $(TARGET)
+	rm -Rf build "$(TARGET)" timedit timedit.exe
 
-build/%.o: %.cpp
+$(BUILDDIR)/%.o: %.c Makefile
 	@mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
-	
-build/%.o: %.cxx
-	@mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) $(INCLUDE) -c $< -o $@
+	$(CC) $(BUILD_CPPFLAGS) $(CPPFLAGS) $(BUILD_CFLAGS) $(INCLUDE) $(CFLAGS) -MMD -MP -c "$<" -o "$@"
 
-build/%.o: icons/%.png
+$(BUILDDIR)/%.o: %.cpp Makefile
 	@mkdir -p $(dir $@)
-	ld -r -b binary -o $@ $<
+	$(CXX) $(BUILD_CPPFLAGS) $(CPPFLAGS) $(BUILD_CFLAGS) $(FLTK_CXXFLAGS) $(INCLUDE) -std=c++11 $(CXXFLAGS) -MMD -MP -c "$<" -o "$@"
 	
-build/%.res: %.rc
-	windres $< -O coff $@
+$(BUILDDIR)/%.o: %.cxx Makefile
+	@mkdir -p $(dir $@)
+	$(CXX) $(BUILD_CPPFLAGS) $(CPPFLAGS) $(BUILD_CFLAGS) $(FLTK_CXXFLAGS) $(INCLUDE) -std=c++11 $(CXXFLAGS) -MMD -MP -c "$<" -o "$@"
+
+$(BUILDDIR)/%.o: $(BUILDDIR)/%.cpp Makefile
+	$(CXX) $(BUILD_CPPFLAGS) $(CPPFLAGS) $(BUILD_CFLAGS) -std=c++11 $(CXXFLAGS) -MMD -MP -c "$<" -o "$@"
+
+$(BUILDDIR)/%.cpp: icons/%.png embed_icon.py
+	@mkdir -p $(dir $@)
+	$(PYTHON) embed_icon.py "$<" "$@"
 	
-install:
-	cp -p $(TARGET) $(INSTALL)/$(TARGET)
+$(BUILDDIR)/%.res: %.rc icons/timedit.ico Makefile
+	@mkdir -p $(dir $@)
+	$(WINDRES) "$<" -O coff -o "$@"
+	
+install: all
+	install -d "$(DESTDIR)$(bindir)"
+	install -m 755 "$(TARGET)" "$(DESTDIR)$(bindir)/$(TARGET)"
+
+-include $(OFILES:.o=.d)

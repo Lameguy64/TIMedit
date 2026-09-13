@@ -35,33 +35,52 @@ TIMTOOL.
 
 TIMedit is built without the use of a build system front-end such as cmake or
 ninja. All you need is GNU make (provided by msys2 in Windows or
-build-essential(s) in your Linux distro) and the required libraries fltk,
-tinyxml2 and Freeimage.
+build-essential(s) in your Linux distro), a C++11 compiler, Python 3, and
+the required libraries fltk, tinyxml2 and Freeimage.
 
-Under Windows, the makefile assumes the dependencies reside in the root of
-your C drive. You may want to modify them if you're using newer library
-versions or you prefer to locate them elsewhere.
+The makefile uses fltk-config to locate FLTK and pkg-config when available
+for the other libraries. For custom installations, override FLTK_CONFIG,
+FREEIMAGE_CFLAGS, FREEIMAGE_LIBS, TINYXML2_CFLAGS and TINYXML2_LIBS on the
+make command line. CPPFLAGS, CXXFLAGS, LDFLAGS and LDLIBS are also supported.
+Python 3 generates the embedded icon; override PYTHON if necessary.
 
 ### Windows (with MinGW + GNU make)
-1. Download and unpack required libraries to the root of your C drive.
+1. Install MinGW, GNU make, Python 3, pkg-config and the required libraries
+   in an MSYS2 environment. Use libraries matching the compiler architecture.
   * fltk
   * tinyxml2
   * freeimage
-  FLTK and tinyxml2 libraries need to be built first before compiling.
 2. Change current directory to the TIMedit source directory.
-3. Modify variables in makefile when necessary.
+3. Ensure fltk-config and windres are on PATH, or override FLTK_CONFIG and WINDRES.
 4. Run "make".
 
-### Linux (may work in a MSys2 environment)
-1. Install the build-essential(s) package if not yet installed already.
+### Linux
+1. Install GNU make, a C++ compiler, Python 3 and pkg-config.
 2. Install development packages (usually suffixed with -dev) of the
   following libraries:
   * fltk
   * tinyxml2
   * freeimage
 3. Change current directory to the TIMedit source directory.
-4. Modify variables in makefile when necessary.
+4. Ensure fltk-config is on PATH, or override FLTK_CONFIG.
 5. Run "make".
+
+### macOS
+1. Install the Xcode command line tools, GNU make, Python 3 and pkg-config.
+2. Install FLTK, tinyxml2 and FreeImage for the same architecture as the compiler.
+3. Change current directory to the TIMedit source directory.
+4. Ensure fltk-config is on PATH. For libraries outside the default search
+   paths, supply the include and library flags described above.
+5. Run "make CXX=clang++" (or "gmake CXX=clang++" if GNU make is named gmake).
+
+Run "make CONF=debug" for a debug build. Object files are separated by
+platform and configuration under build; the executable is copied to the
+source directory as timedit (timedit.exe on Windows). The macOS build
+produces an executable, not an application bundle.
+
+Run "make install PREFIX=/usr/local" to install, or add DESTDIR to stage an
+installation. For cross-compilation, set PLATFORM to Windows, Linux or
+Darwin and select the target CXX, FLTK_CONFIG, PKG_CONFIG and WINDRES tools.
 
 
 ## Known Issues

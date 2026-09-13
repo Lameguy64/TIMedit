@@ -1,7 +1,7 @@
 #ifndef FL_TIMIMAGE_H
 #define FL_TIMIMAGE_H
 
-#include <Fl/Fl_Box.H>
+#include <FL/Fl_Box.H>
 #include "TimImage.h"
 
 #define MUL_FACTOR	33694

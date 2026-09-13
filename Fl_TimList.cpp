@@ -1,6 +1,7 @@
-#include <Fl/fl_draw.H>
-#include <Fl/Fl_Widget.H>
-#include <Fl/Enumerations.H>
+#include <FL/fl_draw.H>
+#include <FL/Fl_Widget.H>
+#include <FL/Enumerations.H>
+#include <FL/filename.H>
 #include "Fl_TimList.h"
 
 #define HEADER_FONTFACE FL_HELVETICA_BOLD
@@ -50,6 +51,8 @@ Fl_TimList::~Fl_TimList() {
 	
 }
 
+std::string StripFileName(const char *file);
+
 extern std::string user_name;
 extern std::string replace_name;
 
@@ -61,38 +64,12 @@ void Fl_TimList::add_item(TimItem* item, int deprecate) {
 	memset(&itm, 0, sizeof(_item));
 	
 	// Set name of item
-	itm.text[0] = strrchr((char*)item->file.c_str(), '/');
-	if( !itm.text[0] ) {
-
-		itm.text[0] = strrchr((char*)item->file.c_str(), '\\');
-
-		if( !itm.text[0] ) {
-			
-			itm.text[0] = strdup(item->file.c_str());
-			
-		} else {
-			
-			itm.text[0] = strdup(itm.text[0]+1);
-			
-		}
-
-	} else {
-		
-		itm.text[0] = strdup(itm.text[0]+1);
-		
-	}
+	itm.text[0] = strdup(fl_filename_name(item->file.c_str()));
 	
 	// Set directory of item
-	std::string path_temp = item->file;			
-	size_t pos = path_temp.find_last_of("/");
+	std::string path_temp = StripFileName(item->file.c_str());
 
-	if( pos == std::string::npos )
-		pos = path_temp.find_last_of("\\");
-
-	if( pos != std::string::npos )
-		path_temp.erase(pos);
-
-	if( deprecate )
+	if( deprecate && !user_name.empty() )
 	{
 		while( (i = path_temp.find(user_name)) != std::string::npos )
 		{

@@ -1,4 +1,4 @@
-#include <Fl/Fl.H>
+#include <FL/Fl.H>
 #include "TimItem.h"
 
 std::string MakePathRelative(const char* path, const char* base);

@@ -102,6 +102,8 @@ public:
 	}
 	
 	void SetClutPosition(int x, int y) {
+		if( cl_x != x || cl_y != y )
+			modified = true;
 		cl_x = x;
 		cl_y = y;
 	}
@@ -127,6 +129,8 @@ public:
 	}
 	
 	void SetPosition(int x, int y) {
+		if( im_x != x || im_y != y )
+			modified = true;
 		im_x = x;
 		im_y = y;
 	}

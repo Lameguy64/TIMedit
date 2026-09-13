@@ -1,6 +1,6 @@
 // Created on September 26, 2019, 11:58 AM
 
-#include <Fl/fl_message.H>
+#include <FL/fl_message.H>
 #include "mainui.h"
 #include "paletteui.h"
 #include "TimImage.h"

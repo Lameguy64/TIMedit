@@ -1,5 +1,9 @@
 #include <stdio.h>
-#include <malloc.h>
+#ifdef __APPLE__
+  #include <stdlib.h>
+#else
+  #include <malloc.h>
+#endif
 #include <string.h>
 #include "TimImage.h"
 #include "Fl_TimImage.h"

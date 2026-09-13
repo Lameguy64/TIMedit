@@ -1,7 +1,8 @@
 #include <string>
-#include <Fl/Fl_Color_Chooser.H>
-#include <Fl/Fl_Native_File_Chooser.H>
-#include <Fl/fl_message.H>
+#include <FL/Fl_Color_Chooser.H>
+#include <FL/Fl_Native_File_Chooser.H>
+#include <FL/fl_message.H>
+#include <FL/filename.H>
 #include <FreeImage.h>
 #include "mainui.h"
 #include "importui.h"
@@ -12,7 +13,8 @@ extern MainUI					*ui;
 extern std::string				ctx_project;
 extern std::vector<TimItem*>	ctx_items;
 
-std::string MakePathAbsolute(const char* relpath, const char* base, int has_file = false);
+std::string StripFileName(const char *file);
+std::string MakePathAbsolute(const char* relpath, const char* base);
 void RegisterTimItem(TimItem* item, int refresh = 0);
 
 
@@ -312,17 +314,8 @@ void cb_ReimportTim(Fl_Menu_* w, long u)
 	
 	fl_message_title( "Error Importing" );
 	
-	std::string abs_file;
-	
-	if( tim->src_file[1] == ':' )
-	{
-		abs_file = tim->src_file;
-	}
-	else
-	{
-		abs_file = MakePathAbsolute(
-			tim->src_file.c_str(), ctx_project.c_str(), 1 );
-	}
+	std::string base_path = StripFileName(ctx_project.c_str());
+	std::string abs_file = MakePathAbsolute(tim->src_file.c_str(), base_path.c_str());
 	
 	if( !u )
 	{
@@ -631,7 +624,7 @@ void cb_ImportOkay(Fl_Return_Button *w, void *u)
 	
 	import_item->file = chooser.filename();
 	
-	if( import_item->file.find(".") == std::string::npos )
+	if( !*fl_filename_ext(import_item->file.c_str()) )
 	{
 		import_item->file.append(".tim");
 	}
